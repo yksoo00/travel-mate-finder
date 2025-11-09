@@ -36,6 +36,14 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // JWT 관련 라이브러리
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'  // JWT API
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'  // JWT 구현체
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'  // JWT에 Jackson을 사용하여 JSON 처리
+
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
 }
 
 tasks.named('test') {
