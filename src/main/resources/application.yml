@@ -31,7 +31,7 @@ spring:
     activate:
       on-profile: local,test
   datasource:
-    url: jdbc:log4jdbc:mysql://{DB_HOST}/{DB_NAME}
+    url: jdbc:log4jdbc:mysql://${DB_HOST}/${DB_NAME}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
