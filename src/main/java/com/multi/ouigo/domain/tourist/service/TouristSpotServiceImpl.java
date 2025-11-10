@@ -18,15 +18,6 @@ public class TouristSpotServiceImpl implements TouristSpotService {
     private final TouristSpotMapper touristSpotMapper;
     @Override
     public Page<TouristSpotResDto> getTouristSpots(Pageable pageable) {
-//        Page<TouristSpot> touristSpots = touristSpotRepository.findAll(pageable).map(touristSpotEntity -> {
-//            TouristSpot touristSpot = touristSpotMapper.toDomain(touristSpotEntity);
-//            return touristSpot;
-//        });
-//        //  **
-//        return touristSpots.map(touristSpot -> {
-//            TouristSpotResDto resDto = touristSpotMapper.toResDto(touristSpot);
-//            return resDto;
-//        });
         return touristSpotRepository.findAll(pageable)
                 .map(touristSpotMapper::toResDto);
     }
