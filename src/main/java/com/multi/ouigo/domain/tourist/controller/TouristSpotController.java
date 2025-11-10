@@ -24,15 +24,34 @@ public class TouristSpotController {
 
     private final TouristSpotService touristSpotService;
 
+//    @GetMapping("/tourist-spots")
+//    public ResponseEntity<ResponseDto> getTouristSpots(
+//            @RequestParam(name = "page", defaultValue = "0") int page,
+//            @RequestParam(name = "size", defaultValue = "10") int size){
+//        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+//        Page<TouristSpotResDto> touristSpots = touristSpotService.getTouristSpots(pageable);
+//
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"페이지별 관광지 목록 조회 성공",touristSpots));
+//
+//    }
     @GetMapping("/tourist-spots")
     public ResponseEntity<ResponseDto> getTouristSpots(
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size){
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            // 1. keyword 파라미터 추가 (required = false로 필수값 아님을 명시)
+            @RequestParam(name = "keyword", required = false) String keyword){
+        String message = "";
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
-        Page<TouristSpotResDto> touristSpots = touristSpotService.getTouristSpots(pageable);
 
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"페이지별 관광지 목록 조회 성공",touristSpots));
+        // 2. 서비스로 keyword를 그대로 전달 (null일 수도 있음)
+        Page<TouristSpotResDto> touristSpots = touristSpotService.getTouristSpots(keyword, pageable);
 
+        if(keyword == null ){
+            message = "관광지 전체 목록 조회 완료";
+        } else{
+            message = "키워드 기반 페이지별 관광지 목록 조회 성공";
+        }
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,message,touristSpots));
     }
 
 

@@ -6,9 +6,11 @@ import com.multi.ouigo.domain.tourist.dto.res.TouristSpotResDto;
 import com.multi.ouigo.domain.tourist.entity.TouristSpotEntity;
 import com.multi.ouigo.domain.tourist.mapper.TouristSpotMapper;
 import com.multi.ouigo.domain.tourist.repository.TouristSpotRepository;
+import com.multi.ouigo.domain.tourist.specification.TouristSpotSpecification;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
@@ -21,10 +23,26 @@ public class TouristSpotServiceImpl implements TouristSpotService {
     private final TouristSpotRepository touristSpotRepository;
     private final TouristSpotMapper touristSpotMapper;
 
+//    @Override
+//    public Page<TouristSpotResDto> getTouristSpots(Pageable pageable) {
+//        return touristSpotRepository.findAll(pageable)
+//                .map(touristSpotMapper::toResDto);
+//    }
+
     @Override
-    public Page<TouristSpotResDto> getTouristSpots(Pageable pageable) {
-        return touristSpotRepository.findAll(pageable)
-                .map(touristSpotMapper::toResDto);
+    public Page<TouristSpotResDto> getTouristSpots(String keyword, Pageable pageable) {
+        Specification<TouristSpotEntity> spec = (root, query, cb) -> null;
+        if (keyword != null && !keyword.isBlank()) {
+            spec = spec.and(Specification.anyOf( // anyOf = OR 조건
+                    TouristSpotSpecification.titleContains(keyword),
+                    TouristSpotSpecification.descriptionContains(keyword),
+                    TouristSpotSpecification.addressContains(keyword),
+                    TouristSpotSpecification.districtContains(keyword),
+                    TouristSpotSpecification.phoneContains(keyword)
+            ));
+        }
+        Page<TouristSpotEntity> page = touristSpotRepository.findAll(spec, pageable);
+        return page.map(touristSpotMapper::toResDto);
     }
 
     @Override
@@ -50,6 +68,7 @@ public class TouristSpotServiceImpl implements TouristSpotService {
         touristSpot.update(touristSpotReqDto);
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         touristSpotRepository.deleteById(id);

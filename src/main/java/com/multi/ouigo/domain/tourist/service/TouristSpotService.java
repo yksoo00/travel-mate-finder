@@ -9,7 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface TouristSpotService {
-    Page<TouristSpotResDto> getTouristSpots(Pageable pageable);
+//    Page<TouristSpotResDto> getTouristSpots(Pageable pageable);
+
+    Page<TouristSpotResDto> getTouristSpots(String keyword, Pageable pageable);
 
     TouristSpotAllResDto getTouristSpotById(Long id);
 
