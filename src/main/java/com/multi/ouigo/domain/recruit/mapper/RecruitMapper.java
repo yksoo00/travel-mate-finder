@@ -1,6 +1,7 @@
 package com.multi.ouigo.domain.recruit.mapper;
 
 import com.multi.ouigo.domain.recruit.dto.req.CreateRecruitReqDto;
+import com.multi.ouigo.domain.recruit.dto.res.RecruitListResDto;
 import com.multi.ouigo.domain.recruit.entity.Recruit;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,4 +19,11 @@ public interface RecruitMapper {
     @Mapping(target = "conditions", ignore = true)
     Recruit toEntity(CreateRecruitReqDto createRecruitReqDto);
 
+    @Mapping(target = "memberName", expression = "java(recruit.getMember().getNickName())")
+    @Mapping(target = "memberAge", expression = "java(recruit.getMember().getAge())")
+    @Mapping(target = "memberGender", expression = "java(recruit.getMember().getGender())")
+    @Mapping(source = "id", target = "recruitId")
+    @Mapping(source = "title", target = "recruitTitle")
+    @Mapping(source = "content", target = "recruitContent")
+    RecruitListResDto toDto(Recruit recruit);
 }
