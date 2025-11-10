@@ -1,6 +1,5 @@
 package com.multi.ouigo.domain.trip.dto.res;
 
-import com.multi.ouigo.common.entitiy.BaseEntity;
 import lombok.*;
 
 import java.time.LocalDate;
