@@ -14,5 +14,5 @@ public class TouristSpotResDto {
     private Long id;
     private String district;
     private String title;
-
+    private String address;
 }
