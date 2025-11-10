@@ -1,0 +1,74 @@
+package com.multi.ouigo.domain.tourist.controller;
+
+
+import com.multi.ouigo.common.response.ResponseDto;
+import com.multi.ouigo.domain.tourist.dto.req.TouristSpotReqDto;
+import com.multi.ouigo.domain.tourist.dto.res.TouristSpotAllResDto;
+import com.multi.ouigo.domain.tourist.dto.res.TouristSpotResDto;
+import com.multi.ouigo.domain.tourist.service.TouristSpotService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1")
+public class TouristSpotController {
+
+    private final TouristSpotService touristSpotService;
+
+    @GetMapping("/tourist-spots")
+    public ResponseEntity<ResponseDto> getTouristSpots(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            // 1. keyword 파라미터 추가 (required = false로 필수값 아님을 명시)
+            @RequestParam(name = "keyword", required = false) String keyword){
+        String message = "";
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+
+        Page<TouristSpotResDto> touristSpots = touristSpotService.getTouristSpots(keyword, pageable);
+
+        if(keyword == null ){
+            message = "관광지 전체 목록 조회 완료";
+        } else{
+            message = "키워드 기반 페이지별 관광지 목록 조회 성공";
+        }
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,message,touristSpots));
+    }
+
+
+    @GetMapping("/tourist-spots/{id}")
+    public ResponseEntity<ResponseDto> getTouristSpotById(@PathVariable Long id){
+
+        TouristSpotAllResDto touristSpot= touristSpotService.getTouristSpotById(id);
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"관광지 상세 조회 성공",touristSpot));
+    }
+
+    @PostMapping("/tourist-spots")
+    public ResponseEntity<ResponseDto> save(@ModelAttribute TouristSpotReqDto touristSpotReqDto){
+        System.out.println("touristSpotReqDto : "+touristSpotReqDto.getTitle());
+        Long id = touristSpotService.save(touristSpotReqDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED,"관광지 등록 성공",id));
+
+
+    }
+    @PutMapping("/tourist-spots/{id}")
+    public ResponseEntity<ResponseDto> updateById(@PathVariable Long id, @ModelAttribute @Valid TouristSpotReqDto touristSpotReqDto){
+        touristSpotService.updateById(id,touristSpotReqDto);
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"관광지 수정 성공",id));
+    }
+
+    @DeleteMapping("/tourist-spots/{id}")
+    public ResponseEntity<ResponseDto> deleteById(@PathVariable Long id){
+        touristSpotService.deleteById(id);
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"관광지 삭제 성공",id));
+    }
+}

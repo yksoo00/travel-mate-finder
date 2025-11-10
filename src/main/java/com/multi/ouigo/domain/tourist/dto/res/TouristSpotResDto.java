@@ -1,0 +1,18 @@
+package com.multi.ouigo.domain.tourist.dto.res;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class TouristSpotResDto {
+    private Long id;
+    private String district;
+    private String title;
+
+}
