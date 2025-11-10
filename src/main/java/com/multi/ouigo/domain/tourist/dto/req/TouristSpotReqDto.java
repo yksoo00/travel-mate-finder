@@ -1,7 +1,13 @@
 package com.multi.ouigo.domain.tourist.dto.req;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@Builder
 public class TouristSpotReqDto {
 
 
