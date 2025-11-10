@@ -19,5 +19,5 @@ public class TripListResDto {
     private LocalDate endDate;
     private Integer duration;
     private Integer budget;
-    private Long dDay;
+    private String dDay;
 }
