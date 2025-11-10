@@ -3,6 +3,7 @@ package com.multi.ouigo.domain.trip.service;
 import com.multi.ouigo.domain.member.entity.Member;
 import com.multi.ouigo.domain.member.repository.MemRepository;
 import com.multi.ouigo.domain.trip.dto.req.TripReqDto;
+import com.multi.ouigo.domain.trip.dto.res.TripListResDto;
 import com.multi.ouigo.domain.trip.dto.res.TripResDto;
 import com.multi.ouigo.domain.trip.entity.Trip;
 import com.multi.ouigo.domain.trip.mapper.TripMapper;
@@ -11,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -55,4 +59,44 @@ public class TripService {
 
         return tripMapper.toTripResDto(saveTrip);
     }
+
+
+    // 여행 일정 목록 조회
+
+    public List<TripListResDto> getTripList(Long memberNo) {
+
+        log.info("여행 일정 목록 조회 - memberNo: {}", memberNo);
+
+        List<Trip> trips = tripRepository.findByMemberNoOrderByStartDateDesc(memberNo);
+
+        return trips.stream()
+                .map(trip -> {
+                    TripListResDto dto = tripMapper.toTripListResDto(trip);
+
+                    // D-day 형식
+                    long dDayValue = trip.getDday();
+                    String formattedDDay;
+
+                    if (dDayValue > 0) {
+                        formattedDDay = "D-" + dDayValue;
+                    } else if (dDayValue == 0) {
+                        formattedDDay = "D-Day";
+                    } else {
+                        formattedDDay = "D+" + Math.abs(dDayValue);
+                    }
+
+                    return TripListResDto.builder()
+                            .id(dto.getId())
+                            .destination(dto.getDestination())
+                            .title(dto.getTitle())
+                            .startDate(dto.getStartDate())
+                            .endDate(dto.getEndDate())
+                            .duration(dto.getDuration())
+                            .budget(dto.getBudget())
+                            .dDay(formattedDDay)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
 }

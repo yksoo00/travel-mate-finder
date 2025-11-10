@@ -37,4 +37,20 @@ public class TripController {
     }
 
 
+    // 여행 일정 목록 조회
+
+    @GetMapping
+    public ResponseEntity<ResponseDto> getTripList(
+            @RequestParam(name = "memberNo") Long memberNo) {
+
+        log.info("[TripController] 여행 일정 목록 조회 - memberNo: {}", memberNo);
+
+        return ResponseEntity.ok()
+                .body(new ResponseDto(
+                        HttpStatus.OK,
+                        "여행 일정 목록 조회 성공",
+                        tripService.getTripList(memberNo)
+                ));
+    }
+
 }
