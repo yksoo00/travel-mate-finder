@@ -9,6 +9,10 @@ spring:
       port: ${REDIS_PORT}
       database: 0
       timeout: 2000ms
+  jpa:
+    hibernate:
+      ddl-auto: update   # create / update / validate / none
+    show-sql: true
 springdoc:
   group-configs:
     - group: all
@@ -16,7 +20,7 @@ springdoc:
 logging:
   level:
     root: INFO
-    com.multi.restproduct: DEBUG
+    com.multi.ouigo: DEBUG
     org.springframework.security: DEBUG
 
     # JDBC ?? ?? ????? ???????
@@ -31,7 +35,7 @@ spring:
     activate:
       on-profile: local,test
   datasource:
-    url: jdbc:log4jdbc:mysql://{DB_HOST}/{DB_NAME}
+    url: jdbc:log4jdbc:mysql://${DB_HOST}/${DB_NAME}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
@@ -44,7 +48,7 @@ spring:
 logging:
   level:
     root: INFO
-    com.multi.restproduct: DEBUG
+    com.multi.ouigo: DEBUG
     org.springframework.security: DEBUG
 
     # JDBC ?? ?? ????? ???????
