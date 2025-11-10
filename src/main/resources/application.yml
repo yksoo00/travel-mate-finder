@@ -11,7 +11,7 @@ spring:
       timeout: 2000ms
   jpa:
     hibernate:
-      ddl-auto: update   # create / update / validate / none
+      ddl-auto: update
     show-sql: true
 springdoc:
   group-configs:

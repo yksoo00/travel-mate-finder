@@ -1,18 +1,10 @@
 package com.multi.ouigo.domain.member.entity;
 
 import com.multi.ouigo.common.entitiy.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 
 @Entity
 @Table(name = "members")
@@ -57,19 +49,10 @@ public class Member extends BaseEntity {
     private String introduction; // 자기소개
 
 
+    public void update(String nickName, String email, String profileImage, String introduction) {
+        this.nickName = nickName;
+        this.email = email;
+        this.profileImage = profileImage;
+        this.introduction = introduction;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
