@@ -17,7 +17,7 @@ public class MemResDto {
     private Long no;
     private String memberId;
     private String email;
-    private String nickname;
+    private String nickName;
     private String profileImage;
     private String introduction;
 
@@ -27,7 +27,7 @@ public class MemResDto {
                 .no(member.getNo())
                 .memberId(member.getMemberId())
                 .email(member.getEmail())
-                .nickname(member.getNickname())
+                .nickName(member.getNickName())
                 .profileImage(member.getProfileImage())
                 .introduction(member.getIntroduction())
                 .build();

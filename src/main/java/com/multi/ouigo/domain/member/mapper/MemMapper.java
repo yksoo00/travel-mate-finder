@@ -13,13 +13,13 @@ public interface MemMapper {
 
     @Mapping(source = "no", target = "no")
     @Mapping(source = "email", target = "email")
-    @Mapping(source = "nickname", target = "nickname")
+    @Mapping(source = "nickName", target = "nickName")
     @Mapping(source = "profileImage", target = "profileImage")
     @Mapping(source = "introduction", target = "introduction")
     MemResDto toMemResDto(Member member);
 
     @Mapping(source = "no", target = "no")
-    @Mapping(source = "nickname", target = "nickname")
+    @Mapping(source = "nickName", target = "nickName")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "profileImage", target = "profileImage")
     @Mapping(source = "introduction", target = "introduction")

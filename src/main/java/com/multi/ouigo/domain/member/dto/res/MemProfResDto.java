@@ -18,7 +18,7 @@ public class MemProfResDto {
     private Long no;
     private String memberId;
     private String email;
-    private String nickname;
+    private String nickName;
     private String profileImage;
     private Integer age;
     private String gender;
@@ -30,7 +30,7 @@ public class MemProfResDto {
                 .no(member.getNo())
                 .memberId(member.getMemberId())
                 .email(member.getEmail())
-                .nickname(member.getNickname())
+                .nickName(member.getNickName())
                 .profileImage(member.getProfileImage())
                 .age(member.getAge())
                 .gender(member.getGender())

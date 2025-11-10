@@ -45,7 +45,7 @@ public class MemService {
 
 
         // 정보 수정
-        member.update(memResDto.getNickname(),memResDto.getEmail(), memResDto.getProfileImage(),memResDto.getIntroduction());
+        member.update(memResDto.getNickName(),memResDto.getEmail(), memResDto.getProfileImage(),memResDto.getIntroduction());
 
 
         // 저장
