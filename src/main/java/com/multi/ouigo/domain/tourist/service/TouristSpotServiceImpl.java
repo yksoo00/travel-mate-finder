@@ -23,12 +23,6 @@ public class TouristSpotServiceImpl implements TouristSpotService {
     private final TouristSpotRepository touristSpotRepository;
     private final TouristSpotMapper touristSpotMapper;
 
-//    @Override
-//    public Page<TouristSpotResDto> getTouristSpots(Pageable pageable) {
-//        return touristSpotRepository.findAll(pageable)
-//                .map(touristSpotMapper::toResDto);
-//    }
-
     @Override
     public Page<TouristSpotResDto> getTouristSpots(String keyword, Pageable pageable) {
         Specification<TouristSpotEntity> spec = (root, query, cb) -> null;

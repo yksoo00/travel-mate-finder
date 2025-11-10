@@ -24,16 +24,6 @@ public class TouristSpotController {
 
     private final TouristSpotService touristSpotService;
 
-//    @GetMapping("/tourist-spots")
-//    public ResponseEntity<ResponseDto> getTouristSpots(
-//            @RequestParam(name = "page", defaultValue = "0") int page,
-//            @RequestParam(name = "size", defaultValue = "10") int size){
-//        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
-//        Page<TouristSpotResDto> touristSpots = touristSpotService.getTouristSpots(pageable);
-//
-//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"페이지별 관광지 목록 조회 성공",touristSpots));
-//
-//    }
     @GetMapping("/tourist-spots")
     public ResponseEntity<ResponseDto> getTouristSpots(
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -43,7 +33,6 @@ public class TouristSpotController {
         String message = "";
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
 
-        // 2. 서비스로 keyword를 그대로 전달 (null일 수도 있음)
         Page<TouristSpotResDto> touristSpots = touristSpotService.getTouristSpots(keyword, pageable);
 
         if(keyword == null ){
