@@ -6,6 +6,7 @@ import com.multi.ouigo.domain.tourist.dto.req.TouristSpotReqDto;
 import com.multi.ouigo.domain.tourist.dto.res.TouristSpotAllResDto;
 import com.multi.ouigo.domain.tourist.dto.res.TouristSpotResDto;
 import com.multi.ouigo.domain.tourist.service.TouristSpotService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,5 +51,10 @@ public class TouristSpotController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto(HttpStatus.CREATED,"관광지 등록 성공",id));
 
 
+    }
+    @PutMapping("/tourist-spots/{id}")
+    public ResponseEntity<ResponseDto> updateById(@PathVariable Long id, @ModelAttribute @Valid TouristSpotReqDto touristSpotReqDto){
+        touristSpotService.updateById(id,touristSpotReqDto);
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"관광지 수정 성공",id));
     }
 }

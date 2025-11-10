@@ -2,7 +2,9 @@ package com.multi.ouigo.domain.tourist.entity;
 
 
 import com.multi.ouigo.common.entitiy.BaseEntity;
+import com.multi.ouigo.domain.tourist.dto.req.TouristSpotReqDto;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,4 +31,11 @@ public class TouristSpotEntity extends BaseEntity {
     @Column(name = "phn", nullable = false)
     private String phone;
 
+    public void update(@Valid TouristSpotReqDto touristSpotReqDto) {
+        this.district = touristSpotReqDto.getDistrict();
+        this.title = touristSpotReqDto.getTitle();
+        this.description = touristSpotReqDto.getDescription();
+        this.address = touristSpotReqDto.getAddress();
+        this.phone = touristSpotReqDto.getPhone();
+    }
 }
