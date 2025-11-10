@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TouristSpotResDto {
-
+    private Long id;
     private String district;
     private String title;
 
