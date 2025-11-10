@@ -1,4 +1,4 @@
-package com.multi.ouigo.common.exception;
+package com.multi.ouigo.common.exception.dto;
 
 
 import lombok.Data;
