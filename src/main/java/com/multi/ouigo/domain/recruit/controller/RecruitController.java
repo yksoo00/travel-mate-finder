@@ -16,6 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +57,14 @@ public class RecruitController {
                     startDate, endDate)));
 
 
+    }
+
+    @GetMapping("/{recruitId}")
+    public ResponseEntity<ResponseDto> findRecruit(HttpServletRequest request,
+        @PathVariable(name = "recruitId") Long recruitId) {
+        return ResponseEntity.ok()
+            .body(new ResponseDto(HttpStatus.CREATED, "모집 전체 조회 성공",
+                recruitService.findRecruit(request, recruitId)));
     }
 
 }
