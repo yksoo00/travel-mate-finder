@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class PathController {
+
     @GetMapping("/tourist")
     public String showTouristPage() {
 
@@ -20,4 +21,21 @@ public class PathController {
         return "touristDetail";
     }
 
+    @GetMapping("/recruit/recruitListPage")
+    public String recruitListPage() {
+        // templates/recruit/recruitList.html
+        return "recruit/recruitListPage";
+    }
+
+    @GetMapping("/myPage/profilePage")
+    public String profilePage() {
+        // templates/recruit/recruitList.html
+        return "myPage/profilePage";
+    }
+
+    @GetMapping("/layout")
+    public String layout() {
+        // templates/recruit/recruitList.html
+        return "layout";
+    }
 }

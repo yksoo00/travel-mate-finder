@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>OUIGO</title>
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/recruit.css}"> <!-- 추가 -->
+  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=477a1cea9ecc7c2b3e69f3540a3986b4"></script>
+</head>
+<body>
+<!-- Navbar -->
+<div th:replace="~{navbar :: navbar}"></div>
+
+<!-- Main Layout -->
+<div class="main-layout">
+  <!-- Left Side - Kakao Map -->
+  <div class="map-container">
+    <div id="map"></div>
+  </div>
+
+  <!-- Right Side - Content -->
+  <div class="content-container">
+    <div th:replace="recruit/recruitListPage :: recruitContent"></div>
+  </div>
+</div>
+
+<script th:src="@{/js/map.js}"></script>
+</body>
+</html>
