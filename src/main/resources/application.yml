@@ -29,6 +29,9 @@ logging:
       audit: OFF
       connection: OFF
 
+tour-api:
+  service-key: d97cc53c28740a39e54b6c1fec553bd81cc241e01843295cca47f540fd767807
+
 ---
 spring:
   config:
