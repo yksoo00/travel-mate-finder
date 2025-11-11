@@ -2,8 +2,16 @@ package com.multi.ouigo.domain.review.entity;
 
 import com.multi.ouigo.common.entitiy.BaseEntity;
 import com.multi.ouigo.domain.member.entity.Member;
-import com.multi.ouigo.domain.tourist.entity.Tourist;
-import jakarta.persistence.*;
+import com.multi.ouigo.domain.tourist.entity.TouristSpot;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,12 +35,12 @@ public class Review extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tourist_id")
-    private Tourist tourist;  // 관광지
+    private TouristSpot tourist;  // 관광지
 
     @Column(nullable = false, length = 1000)
     private String cont;  // 리뷰 내용
 
-    public void setTourist(Tourist tourist) {       // 연관 관계
+    public void setTourist(TouristSpot tourist) {       // 연관 관계
         this.tourist = tourist;
         if (tourist != null && !tourist.getReviews().contains(this)) {
             tourist.getReviews().add(this);

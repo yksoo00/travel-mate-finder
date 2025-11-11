@@ -7,8 +7,8 @@ import com.multi.ouigo.domain.review.dto.res.ReviewResDTO;
 import com.multi.ouigo.domain.review.entity.Review;
 import com.multi.ouigo.domain.review.mapper.ReviewMapper;
 import com.multi.ouigo.domain.review.repository.ReviewRepository;
-import com.multi.ouigo.domain.tourist.entity.Tourist;
-import com.multi.ouigo.domain.tourist.repository.TouristRepository;
+import com.multi.ouigo.domain.tourist.entity.TouristSpot;
+import com.multi.ouigo.domain.tourist.repository.TouristSpotRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,9 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class ReviewService {
+
     public final ReviewRepository reviewRepository;
     private final ReviewMapper reviewMapper;
-    private final TouristRepository touristRepository;
+    private final TouristSpotRepository touristRepository;
     private final MemberRepository memberRepository;
 
     public Page<ReviewResDTO> selectReviewTotalByTourist(Long touristId, Pageable pageable) {
@@ -36,13 +37,11 @@ public class ReviewService {
     @Transactional(rollbackFor = Exception.class)
     public Long registerReview(Long touristId, ReviewReqDTO reviewReqDTO, Long memberNo) {
 
-
-        Tourist tourist = touristRepository.findById(touristId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관광지입니다."));
+        TouristSpot tourist = touristRepository.findById(touristId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관광지입니다."));
 
         Member member = memberRepository.findByNo(memberNo)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
         Review review = reviewMapper.toEntity(reviewReqDTO);
 
@@ -51,15 +50,14 @@ public class ReviewService {
 
         reviewRepository.save(review);
 
-        return  review.getTourist().getId();
+        return review.getTourist().getId();
     }
 
     @Transactional(rollbackFor = Exception.class)
     public Long updateReview(Long reviewId, ReviewReqDTO reviewReqDTO) {
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰가 존재하지 않습니다."));
-
+            .orElseThrow(() -> new IllegalArgumentException("리뷰가 존재하지 않습니다."));
 
         review.update(reviewReqDTO.getContent());
 
@@ -70,7 +68,7 @@ public class ReviewService {
     public Long deleteReview(Long reviewId) {
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
 
         review.setDeleted(true);
 
