@@ -6,6 +6,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class BaseEntity {
+
     @CreatedDate
     @Column(name = "crt_dt", updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -24,6 +26,7 @@ public abstract class BaseEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Setter
     @Column(name = "del_yn", nullable = false, columnDefinition = "TINYINT(1) default 0")
     private boolean isDeleted = false;
 

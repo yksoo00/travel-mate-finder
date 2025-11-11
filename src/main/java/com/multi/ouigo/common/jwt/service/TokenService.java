@@ -37,7 +37,7 @@ public class TokenService {
         String refreshToken;
 
         if (t instanceof String) {
-            String jwt = resolveToken((String) t);
+            String jwt = tokenProvider.resolveToken((String) t);
             Claims claims = tokenProvider.parseClames(jwt);
 
             memberId = claims.getSubject();
@@ -83,13 +83,6 @@ public class TokenService {
         return TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    private String resolveToken(String token) {
-        // Bearer 접두어가 있는 경우 제거하고 순수한 토큰 반환
-        if (token != null && token.startsWith("Bearer ")) {
-            return token.substring(7);
-        }
-        return token;
-    }
 
     @Transactional(noRollbackFor = RefreshTokenException.class)
     public String handleRefreshToken(String memberId) {
@@ -112,7 +105,7 @@ public class TokenService {
     }
 
     public void deleteRefreshToken(String accessToken) {
-        String token = resolveToken(accessToken);
+        String token = tokenProvider.resolveToken(accessToken);
         String email = tokenProvider.getUserId(token);
 
         log.info("Refresh Token 삭제 완료 : 사용자 email - {}", email);
@@ -120,7 +113,7 @@ public class TokenService {
 
     public void registBlackList(String accessToken) {
         // "Bearer " 제거 (헤더에서 받은 경우)
-        String token = resolveToken(accessToken); // Bearer 제거
+        String token = tokenProvider.resolveToken(accessToken); // Bearer 제거
         if (!tokenProvider.validateToken(token)) {
             throw new TokenException("유효하지 않은 액세스 토큰입니다.");
         }

@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -42,7 +43,6 @@ public class TokenProvider {
 
     //application.yml 에 정의해놓은 jwt.secret 값을 가져와서 JWT 를 만들 때 사용하는 암호화 키값을 생성
     public TokenProvider(JwtProvider jwtProvider, RedisTemplate<String, String> redisTemplate) {
-
         this.jwtProvider = jwtProvider;
         SKEY = jwtProvider.getSecretKey();
         ISSUER = jwtProvider.getIssuer();
@@ -156,5 +156,23 @@ public class TokenProvider {
     public String getUserId(String token) {
         return Jwts.parserBuilder().setSigningKey(SKEY).build().parseClaimsJws(token).getBody()
             .getSubject();
+    }
+
+    public String resolveToken(String token) {
+        // Bearer 접두어가 있는 경우 제거하고 순수한 토큰 반환
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return token;
+    }
+
+    public String extractMemberId(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+            throw new TokenException("Authorization 헤더가 없거나 올바르지 않습니다.");
+        }
+
+        String jwt = resolveToken(bearerToken);
+        return getUserId(jwt);
     }
 }
