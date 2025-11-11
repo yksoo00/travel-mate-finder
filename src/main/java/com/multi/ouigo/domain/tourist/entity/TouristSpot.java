@@ -27,7 +27,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TouristSpot extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,7 +34,7 @@ public class TouristSpot extends BaseEntity {
     private String district;
     @Column(name = "ttl", nullable = false)
     private String title;
-    @Column(name = "dsc", nullable = false, length = 5000)
+    @Column(length = 10000, name = "dsc", nullable = false)
     private String description;
     @Column(name = "addr", nullable = false)
     private String address;

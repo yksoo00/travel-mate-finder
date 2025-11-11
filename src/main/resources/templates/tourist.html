@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관광지 전체 조회</title>
+    <script typeN="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8b23243ecce1d67f7d49784724586afa&libraries=services"></script>
+</head>
+<body>
+
+<h1>관광지 목록</h1>
+
+<div id="map" style="width:100%; height:400px; border:1px solid #000;"></div>
+
+<hr>
+
+<h3>관광지 리스트</h3>
+<ul id="spot-list">
+</ul>
+
+<hr>
+
+<div id="pagination">
+</div>
+
+<script>
+    let map;
+    let geocoder;
+    let markers = [];
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const mapContainer = document.getElementById('map');
+        const mapOption = {
+            center: new kakao.maps.LatLng(37.566826, 126.9786567),
+            level: 7
+        };
+
+        map = new kakao.maps.Map(mapContainer, mapOption);
+        geocoder = new kakao.maps.services.Geocoder();
+
+        loadAllMarkers();
+        loadPage(0);
+    });
+
+
+    function loadAllMarkers() {
+        fetch(`/api/v1/tourist-spots/markers`)
+            .then(response => response.json())
+            .then(data => {
+                const allSpots = data.data;
+                displayMapMarkers(allSpots);
+            })
+            .catch(error => console.error('Error fetching all markers:', error));
+    }
+
+
+
+    function loadPage(page) {
+        fetch(`/api/v1/tourist-spots?page=${page}&size=10`)
+            .then(response => response.json())
+            .then(data => {
+                const pageData = data.data;
+                displayList(pageData.content);
+                displayPagination(pageData);
+            })
+            .catch(error => console.error('Error fetching tourist spots page:', error));
+    }
+
+
+    // [수정] 기능 1 (ID 제거) + 기능 3 (리스트 클릭)
+    function displayList(spots) {
+        const listElement = document.getElementById('spot-list');
+        listElement.innerHTML = '';
+
+        spots.forEach(spot => {
+            const li = document.createElement('li');
+
+            // <a> 태그 (링크) 생성
+            const link = document.createElement('a');
+            link.href = `/tourist-detail?id=${spot.id}`; // 상세보기 URL
+            link.textContent = `[${spot.district}] ${spot.title}`; // (ID) 제거
+
+            li.appendChild(link);
+            listElement.appendChild(li);
+        });
+    }
+
+
+    // [수정] 기능 2 (마커 클릭)
+    function displayMapMarkers(spots) {
+        markers.forEach(marker => marker.setMap(null));
+        markers = [];
+
+        spots.forEach(spot => {
+            if (!spot.address) {
+                console.warn(`[${spot.title}] 주소(address)값이 없어 마커를 표시할 수 없습니다.`);
+                return;
+            }
+
+            geocoder.addressSearch(spot.address, function (result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                    const marker = new kakao.maps.Marker({
+                        map: map,
+                        position: coords
+                    });
+
+                    // 인포윈도우 (마우스 오버용)
+                    const infowindow = new kakao.maps.InfoWindow({
+                        content: `<div style="padding:5px; width:150px; text-align:center;">${spot.title}</div>`
+                    });
+
+                    // [수정] 마커 클릭 시 상세보기로 이동
+                    kakao.maps.event.addListener(marker, 'click', function () {
+                        window.location.href = `/tourist-detail?id=${spot.id}`;
+                    });
+
+                    // [보너스] 마우스 오버/아웃 시 인포윈도우 표시
+                    kakao.maps.event.addListener(marker, 'mouseover', function() {
+                        infowindow.open(map, marker);
+                    });
+                    kakao.maps.event.addListener(marker, 'mouseout', function() {
+                        infowindow.close();
+                    });
+
+                    markers.push(marker);
+                }
+            });
+        });
+    }
+
+
+    function displayPagination(pageData) {
+        const paginationElement = document.getElementById('pagination');
+        paginationElement.innerHTML = '';
+
+        const totalPages = pageData.totalPages;
+        const currentPage = pageData.number;
+
+        for (let i = 0; i < totalPages; i++) {
+            const pageLink = document.createElement('a');
+            pageLink.href = '#';
+            pageLink.textContent = i + 1;
+
+            if (i === currentPage) {
+                pageLink.style.fontWeight = 'bold';
+                pageLink.style.color = 'red';
+            }
+
+            pageLink.style.margin = '0 5px';
+
+            pageLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                loadPage(i);
+            });
+
+            paginationElement.appendChild(pageLink);
+        }
+    }
+</script>
+</body>
+</html>
