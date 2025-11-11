@@ -2,9 +2,19 @@ package com.multi.ouigo.domain.tourist.entity;
 
 
 import com.multi.ouigo.common.entitiy.BaseEntity;
+import com.multi.ouigo.domain.review.entity.Review;
 import com.multi.ouigo.domain.tourist.dto.req.TouristSpotReqDto;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +40,9 @@ public class TouristSpot extends BaseEntity {
     private String address;
     @Column(name = "phn", nullable = false)
     private String phone;
+    @OneToMany
+    @JoinColumn(name = "reviews")
+    private List<Review> reviews = new ArrayList<>();
 
     public void update(@Valid TouristSpotReqDto touristSpotReqDto) {
         this.district = touristSpotReqDto.getDistrict();
@@ -37,5 +50,10 @@ public class TouristSpot extends BaseEntity {
         this.description = touristSpotReqDto.getDescription();
         this.address = touristSpotReqDto.getAddress();
         this.phone = touristSpotReqDto.getPhone();
+    }
+
+    public void addReview(Review review) {    // 양방향 참조 연결
+        this.reviews.add(review);
+        review.setTourist(this);
     }
 }
