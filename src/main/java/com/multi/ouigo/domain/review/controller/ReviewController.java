@@ -40,5 +40,20 @@ public class ReviewController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "리뷰 등록 성공", null));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateReview(@PathVariable("id") Long reviewId,
+                                                    @RequestBody ReviewReqDTO reviewReqDTO) {
+        reviewService.updateReview(reviewId, reviewReqDTO);
+        return ResponseEntity.ok("리뷰 수정 성공");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteReview(@PathVariable("id") Long reviewId){
+
+
+        reviewService.deleteReview(reviewId);
+        return ResponseEntity.ok("리뷰가 삭제되었습니다.");
+    }
+
 
 }

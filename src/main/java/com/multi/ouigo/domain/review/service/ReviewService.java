@@ -46,11 +46,34 @@ public class ReviewService {
 
         Review review = reviewMapper.toEntity(reviewReqDTO);
 
-        review.setTourist(tourist);
-        review.setMember(member);
+        review.setMember(member);  // 양방향 연관관계
+        tourist.addReview(review);
 
         reviewRepository.save(review);
 
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateReview(Long reviewId, ReviewReqDTO reviewReqDTO) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰가 존재하지 않습니다."));
+
+        review.update(reviewReqDTO.getContent());
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteReview(Long reviewId) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+
+        review.setDeleted(true);
+
+        review.getTourist().getReviews().remove(review);
+
+    }
+
 
 }
