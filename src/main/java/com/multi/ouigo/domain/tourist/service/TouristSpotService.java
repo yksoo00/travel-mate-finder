@@ -21,4 +21,6 @@ public interface TouristSpotService {
     void updateById(Long id,TouristSpotReqDto touristSpotReqDto);
 
     void deleteById(Long id);
+
+    String getImages(String keyword);
 }

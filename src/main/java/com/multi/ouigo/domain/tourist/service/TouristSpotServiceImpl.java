@@ -9,13 +9,22 @@ import com.multi.ouigo.domain.tourist.repository.TouristSpotRepository;
 import com.multi.ouigo.domain.tourist.specification.TouristSpotSpecification;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
@@ -24,6 +33,10 @@ public class TouristSpotServiceImpl implements TouristSpotService {
 
     private final TouristSpotRepository touristSpotRepository;
     private final TouristSpotMapper touristSpotMapper;
+    private final RestTemplate restTemplate; //
+
+    @Value("${tour-api.service-key}")
+    private String tourApiServiceKey;
 
     @Override
     public Page<TouristSpotResDto> getTouristSpots(String keyword, Pageable pageable) {
@@ -52,7 +65,7 @@ public class TouristSpotServiceImpl implements TouristSpotService {
 
     @Override
     public TouristSpotAllResDto getTouristSpotById(Long id) {
-        TouristSpot touristSpot = touristSpotRepository.findById(id).orElseThrow(()->new IllegalArgumentException("조회할 관광지가 존재하지 않습니다."));
+        TouristSpot touristSpot = touristSpotRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("조회할 관광지가 존재하지 않습니다."));
         return touristSpotMapper.toAllResDto(touristSpot);
     }
 
@@ -68,7 +81,7 @@ public class TouristSpotServiceImpl implements TouristSpotService {
     @Override
     public void updateById(Long id, @Valid TouristSpotReqDto touristSpotReqDto) {
         TouristSpot touristSpot = touristSpotRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("수정할 데이터가 없음."));
+                .orElseThrow(() -> new IllegalArgumentException("수정할 데이터가 없음."));
 
         touristSpot.update(touristSpotReqDto);
     }
@@ -77,5 +90,48 @@ public class TouristSpotServiceImpl implements TouristSpotService {
     @Override
     public void deleteById(Long id) {
         touristSpotRepository.deleteById(id);
+    }
+
+    @Override
+    public String getImages(String keyword) {
+        String MobileOS = "ETC";
+        String MobileApp = "OuiGoApp";
+        String numOfRows = "5";
+        String _type = "json";
+
+        try {
+
+            org.springframework.web.util.UriComponentsBuilder builder =
+                    org.springframework.web.util.UriComponentsBuilder.fromHttpUrl("https://apis.data.go.kr/B551011/PhotoGalleryService1/gallerySearchList1")
+                            .queryParam("serviceKey", tourApiServiceKey)
+                            .queryParam("MobileOS", MobileOS)
+                            .queryParam("MobileApp", MobileApp)
+                            .queryParam("numOfRows", numOfRows)
+                            .queryParam("_type", _type)
+                            .queryParam("keyword", keyword);
+
+            String urlString = builder.toUriString().replace("+", "%20");
+
+            URI uri = new URI(urlString);
+
+            System.out.println("################                Request URI = " + uri);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.GET,
+                    entity,
+                    String.class
+            );
+            return response.getBody();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"response\": {\"header\": {\"resultCode\": \"9999\", \"resultMsg\": \"" + e.getMessage() + "\"}}}";
+        }
     }
 }
