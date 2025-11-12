@@ -8,18 +8,31 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class PathController {
 
-    @GetMapping("/tourist")
-    public String showTouristPage() {
+    @GetMapping("/tourist/touristListPage")
+    public String TouristPage() {
 
-        return "tourist";
+        return "tourist/touristListPage";
+    }
+
+    @GetMapping("/tourist/touristCreatePage")
+    public String touristCreatePage() {
+        // templates/tourist/touristCreatePage.html 파일을 반환
+        return "tourist/touristCreatePage";
     }
 
 
-    @GetMapping("/tourist-detail")
-    public String showTouristDetailPage(@RequestParam Long id, Model model) {
+    @GetMapping("/tourist/touristDetail")
+    public String TouristDetailPage(@RequestParam Long id, Model model) {
         model.addAttribute("touristId", id);
-        return "touristDetail";
+        return "tourist/touristDetail";
     }
+
+    @GetMapping("/tourist/touristUpdatePage")
+    public String touristUpdatePage(@RequestParam Long id, Model model) {
+        model.addAttribute("touristId", id);
+        return "tourist/touristUpdatePage";
+    }
+
 
     @GetMapping("/recruit/recruitListPage")
     public String recruitListPage() {
