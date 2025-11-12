@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
     @Column(name = "nick_nm", nullable = false, unique = true, length = 6)
     private String nickName;  // 닉네임(중복불가, 최대 6글자)
 
-    @Column(name = "prof_img", length = 500)
+    @Column(name = "prof_img", columnDefinition = "MEDIUMTEXT")
     private String profileImage;  // 프로필 이미지 URL
 
     @Column(name = "age")
