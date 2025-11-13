@@ -40,6 +40,13 @@ public class JwtConfig {
             .sessionManagement(
                 sesstion -> sesstion.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             ).authorizeHttpRequests(auth -> auth
+                //
+                        .requestMatchers("/tourist/**","layout/**").permitAll()
+                        .requestMatchers("/tourist-detail").permitAll()
+                        .requestMatchers("/api/v1/tourist-spots/**").permitAll()
+                        .requestMatchers("/api/v1/tourist-spots/images").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
+                //
                 .requestMatchers("/auth/*").permitAll()
                 .requestMatchers("/path/**").permitAll()
                 .requestMatchers("/api/v1/products/**").permitAll()
