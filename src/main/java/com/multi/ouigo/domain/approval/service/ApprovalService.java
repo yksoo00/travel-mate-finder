@@ -38,15 +38,16 @@ public class ApprovalService {
         String memberId = tokenProvider.extractMemberId(request);
 
         Member member = memberRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new NotFindException("없는 멤버입니다"));
+            .orElseThrow(() -> new NotFindException("없는 멤버입니다."));
 
-        Recruit recruit = recruitRepository.findByMember_No(member.getNo())
-            .orElseThrow(() -> new NotFindException("모집 글을 찾을 수 없습니다"));
+        Page<Approval> approvals =
+            approvalRepository.findAllByRecruit_Member_NoAndStatus(
+                member.getNo(),
+                ApprovalStatus.PENDING,
+                pageable
+            );
 
-        Page<Approval> recruits = approvalRepository.findAllByRecruitId(recruit.getId(),
-            pageable);
-
-        return recruits.map(approvalMapper::toMyRecruitDto);
+        return approvals.map(approvalMapper::toMyRecruitDto);
     }
 
     public Page<ApprovalMyRecruitResDto> findAllMyApproval(HttpServletRequest request,
@@ -107,5 +108,22 @@ public class ApprovalService {
         approval.setStatus(ApprovalStatus.REJECTED);
     }
 
+    @Transactional
+    public void deleteApproval(HttpServletRequest request, Long approvalId) {
+        String memberId = tokenProvider.extractMemberId(request);
+        Member requester = memberRepository.findByMemberId(memberId)
+            .orElseThrow(() -> new NotFindException("없는 멤버입니다."));
 
+        Approval approval = approvalRepository.findById(approvalId)
+            .orElseThrow(() -> new NotFindException("신청 내역을 찾을 수 없습니다."));
+
+        if (approval.getMember().getNo().equals(requester.getNo()) ||
+            approval.getRecruit().getMember().getNo().equals(requester.getNo())) {
+
+            approval.setDeleted(true);
+        } else {
+            throw new NotAuthorizedException("삭제 권한이 없습니다.");
+        }
+    }
 }
+
