@@ -1,0 +1,347 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
+
+.id-check-btn {
+  background-color: #00bfff;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto; /* 오른쪽 정렬 */
+  transition: background-color 0.3s ease;
+}
+
+.id-check-btn:hover {
+  background-color: #0095d6;
+}
+
+/* 아이디 입력 + Check ID 버튼 컨테이너 */
+.id-check-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* 왼쪽이 조금 더 넓음, 오른쪽 버튼 좁음 */
+  column-gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+/* 기존 .login__input 유지 */
+.id-check-container .login__input {
+  width: 100%;
+}
+
+/* Check ID 버튼 */
+.id-check-container .id-check-btn {
+  width: 100%;
+  background-color: #00bfff;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.id-check-container .id-check-btn:hover {
+  background-color: #0095d6;
+}
+
+/* 성별 선택 박스 중앙 정렬 */
+/* 성별 선택 박스 */
+.gender-box {
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
+  gap: 1rem; /* 버튼 사이 간격 */
+  margin-top: 1rem;
+  width: 100%; /* 부모 전체 너비 사용 */
+}
+
+/* 라벨 안 버튼 스타일 */
+.gender-box label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f2f2f2;
+  padding: 0.5rem 1.5rem; /* 버튼 너비 확보 */
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* 라디오 숨기기 */
+.gender-box input[type="radio"] {
+  display: none;
+}
+
+/* 선택 시 색상 변경 */
+.gender-box input[type="radio"]:checked + span {
+  background-color: #00bfff;
+  color: #fff;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  display: inline-block;
+}
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Open Sans", sans-serif;
+  font-size: 0.938rem;
+  color: #23004d;
+}
+
+h1 {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.login {
+  display: grid;
+  grid-template-columns: 100%;
+  height: 100vh;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+
+.login__content {
+  display: grid;
+  grid-template-columns: auto auto; /* 이미지와 폼 두 컬럼 */
+  column-gap: 1rem; /* 컬럼 사이 간격 조절, 숫자를 줄이면 더 가까워짐 */
+  justify-content: center; /* 가운데 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+}
+
+.login__img {
+  justify-self: center;
+}
+
+.login__img img {
+  width: 100%;
+  height: 100%;
+  margin-top: 1.5rem;
+}
+
+/* 로그인/회원가입 공통 폼 */
+.login__register,
+.login__create {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: rgba(0, 191, 255, 0.15); /* 투명도 적용 */
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(35, 0, 77, 0.2);
+  animation-duration: 0.4s;
+  animation-name: animateLogin;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 상단 입력/하단 버튼 분리 */
+  gap: 1rem;
+
+  max-height: 80vh; /* 화면 비율에 맞춰 폼 최대 높이 */
+  overflow-y: auto; /* 입력 많아도 스크롤 가능 */
+}
+
+/* 스크롤바 숨기기 (선택) */
+.login__register::-webkit-scrollbar,
+.login__create::-webkit-scrollbar {
+  display: none;
+}
+
+/* 폼 안 버튼 영역 */
+.login__button,
+#sign-in,
+#sign-up {
+  margin-top: 1rem;
+}
+
+/* 부모 컨테이너에서 세로 중앙 정렬 */
+.login__forms {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.login__title {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.login__box {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 0.5rem;
+  padding: 1.125rem 1rem;
+  background-color: #fff;
+  margin-top: 1rem;
+  border-radius: 0.5rem;
+}
+
+.login__icon {
+  font-size: 1.5rem;
+  color: #00bfff;
+}
+
+.login__input {
+  border: none;
+  outline: none;
+  font-size: 0.938rem;
+  font-weight: 700;
+  color: #23004d;
+  width: 100%;
+}
+
+.login__input::placeholder {
+  font-size: 0.938rem;
+  font-family: "Open Sans", sans-serif;
+  color: #a49eac;
+}
+
+.login__forgot {
+  display: block;
+  width: max-content;
+  margin-left: auto;
+  margin-top: 0.5rem;
+  font-size: 0.813rem;
+  font-weight: 600;
+  color: #a49eac;
+}
+
+.login__button {
+  border: none; /* 테두리 제거 */
+  outline: none;
+  display: block;
+  padding: 1rem;
+  margin: 2rem 0;
+  background-color: #00bfff;
+  color: #fff;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 0.5rem;
+  transition: 0.3s;
+}
+
+.login__button:hover {
+  background-color: #00bfff;
+}
+
+.login__account,
+.login__signin,
+.login__signup {
+  font-weight: 600;
+  font-size: 0.813rem;
+  transition: all 0.3s ease;
+  display: inline-block;
+  color: #00bfff;
+}
+
+.login__signin:hover,
+.login__signup:hover {
+  transform: scale(1.5);
+}
+
+.login__account--account,
+.login__signin--account,
+.login__signup--account {
+  color: #23004d;
+}
+
+.login__account--signin,
+.login__account--signup,
+.login__signin--signin,
+.login__signin--signup,
+.login__signup--signin,
+.login__signup--signup {
+  color: #00bfff;
+  cursor: pointer;
+}
+
+.login__social {
+  margin-top: 2rem;
+}
+
+.login__social--icon {
+  font-size: 1.5rem;
+  color: #23004d;
+  margin: 0 1rem;
+}
+
+.block {
+  display: block;
+}
+
+.none {
+  display: none;
+}
+
+@keyframes animateLogin {
+  0% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.1, 1.1);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .login__forms {
+    width: 348px;
+    justify-self: center;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .login {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .login__content {
+    grid-template-columns: repeat(2, max-content);
+    justify-content: center;
+    align-items: center;
+    margin-left: 2rem; /* 10rem → 2rem 정도로 줄이기 */
+    column-gap: 2rem; /* 컬럼 사이 간격 조절 */
+  }
+
+  .login__img {
+    display: flex;
+    width: 700px;
+    height: 700px;
+    border-radius: 1rem;
+    padding-left: 1rem;
+    background-color: #fff; /* ← 하얀색 배경 */
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login__img img {
+    width: 80%;
+    height: auto;
+  }
+}
+
+/*# sourceMappingURL=style.css.map */

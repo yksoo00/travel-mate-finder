@@ -199,4 +199,42 @@ public class RecruitService {
         recruit.addApproval(approval);
 
     }
+
+    public Page<RecruitListResDto> findAllRecruitByTouristSpotId(HttpServletRequest request,
+        Pageable pageable, Long touristSpotId) {
+        String memberId = tokenProvider.extractMemberId(request);
+        Member member = memberRepository.findByMemberId(memberId)
+            .orElseThrow(() -> new NotFindException("없는 멤버입니다"));
+        TouristSpot touristSpot = touristSpotRepository.findById(touristSpotId)
+            .orElseThrow(() -> new NotFindException("해당 관광지는 없습니다"));
+
+        Page<Recruit> pageResult = recruitRepository.findAllByTouristSpotId(touristSpotId,
+            pageable);
+
+        return pageResult.map(recruitMapper::toDto);
+    }
+
+    public Page<RecruitListResDto> findAllRecruitBySearch(HttpServletRequest request,
+        Pageable pageable, String title, String content) {
+
+        String memberId = tokenProvider.extractMemberId(request);
+        Member member = memberRepository.findByMemberId(memberId)
+            .orElseThrow(() -> new NotFindException("없는 멤버입니다"));
+
+        Specification<Recruit> spec = (root, query, cb) -> cb.conjunction();
+
+        if (title != null && !title.isEmpty()) {
+            spec = spec.and((root, query, cb) ->
+                cb.like(root.get("title"), "%" + title + "%")); // 부분 일치 검색 (like)
+        }
+
+        if (content != null && !content.isEmpty()) {
+            spec = spec.and((root, query, cb) ->
+                cb.like(root.get("content"), "%" + content + "%"));
+        }
+
+        Page<Recruit> pageResult = recruitRepository.findAll(spec, pageable);
+
+        return pageResult.map(recruitMapper::toDto);
+    }
 }

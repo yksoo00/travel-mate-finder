@@ -73,6 +73,7 @@ public class Recruit extends BaseEntity {
     private List<Condition> conditions = new ArrayList<>();
 
     @OneToMany(mappedBy = "recruit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Where(clause = "del_yn = 0")
     private List<Approval> approvals = new ArrayList<>();
 
     public void addApproval(Approval approval) {

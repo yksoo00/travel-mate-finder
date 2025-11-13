@@ -46,9 +46,12 @@ public class JwtConfig {
                 .requestMatchers("/api/v1/review/**").permitAll()
                 .requestMatchers("/recruit/**").permitAll()
                 .requestMatchers("/layout/**").permitAll()
-                .requestMatchers("/navbar/**").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/static/**")
+                .requestMatchers("/navbar/**", "/loginForm/**").permitAll()
+                .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**",
+                    "/static/**",
+                    "/images/**")
                 .permitAll()
+                .requestMatchers("/favicon.ico").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/tourist-spots", "/api/v1/tourist-spots/*")
                 .permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/tourist-spots").hasAnyRole("ADMIN")

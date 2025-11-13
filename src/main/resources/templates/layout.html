@@ -2,10 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>OUIGO</title>
+  <title th:text="${pageTitle != null} ? ${pageTitle} : 'OUIGO'">OUIGO</title>
   <link rel="stylesheet" th:href="@{/css/layout.css}">
   <link rel="stylesheet" th:href="@{/css/navbar.css}">
-  <link rel="stylesheet" th:href="@{/css/recruit.css}"> <!-- 추가 -->
+  <link rel="stylesheet" th:href="@{/css/recruit.css}">
+  <link rel="stylesheet" th:href="@{/css/recruit-detail.css}"/>
+  <link rel="stylesheet" th:href="@{/css/recruit-create.css}"/>
+  <link rel="stylesheet" th:href="@{/css/recruit-update.css}"/>
+
   <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=477a1cea9ecc7c2b3e69f3540a3986b4"></script>
 </head>
 <body>
@@ -16,15 +20,19 @@
 <div class="main-layout">
   <!-- Left Side - Kakao Map -->
   <div class="map-container">
+    <h2 class="section-title">카카오 맵</h2>
     <div id="map"></div>
   </div>
 
-  <!-- Right Side - Content -->
+  <!-- Right Side - Content (동적) -->
   <div class="content-container">
-    <div th:replace="recruit/recruitListPage :: recruitContent"></div>
+    <div th:replace="~{${pageFragment} :: recruitContent}"></div>
   </div>
 </div>
 
+<!-- 공통 스크립트 -->
 <script th:src="@{/js/map.js}"></script>
+<script th:src="@{/js/recruit-list.js}" defer></script>
+<script th:src="@{/js/navbar.js}" defer></script>
 </body>
 </html>

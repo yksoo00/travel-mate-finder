@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.PatternMatchUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -65,10 +66,11 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
             // 와일드카드 경로 매칭
-            for (String wildcardPath : WILDCARD_PATHS) {
-                if (requestURI.matches(wildcardPath.replace("**", ".*"))) {
-                    log.info("[JwtFilter] 요청 URI가 제외 경로에 해당하여 필터를 건너뜁니다.");
 
+            for (String wildcardPath : WILDCARD_PATHS) {
+                if (PatternMatchUtils.simpleMatch(wildcardPath, requestURI)) {
+                    log.info("[JwtFilter] 요청 URI({})가 제외 경로({})에 해당하여 필터를 건너뜁니다.",
+                        requestURI, wildcardPath);
                     filterChain.doFilter(request, response);
                     return;
                 }

@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" th:href="@{/css/navbar.css}">
+
 </head>
 <body>
 <nav class="navbar" th:fragment="navbar">
+  <script th:src="@{/js/navbar.js}" defer></script>
   <div class="navbar-top">
 
     <div class="hours">
@@ -19,7 +21,7 @@
   <div class="navbar-main">
     <div class="navbar-container">
       <div class="logo">
-        <a href="/">
+        <a href="/layout">
           <span class="logo-text">OUIGO</span>
         </a>
       </div>
@@ -52,15 +54,21 @@
                   stroke-linecap="round"/>
           </svg>
         </button>
-        <button class="icon-btn-primary">
+        <button class="icon-btn-primary" onclick="goToApprovalPage()">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M3 5L10 10L17 5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
             <rect x="3" y="4" width="14" height="12" rx="1" stroke="white" stroke-width="1.5"/>
           </svg>
         </button>
+
+        <script>
+          function goToApprovalPage() {
+            window.location.href = `/recruit/recruitApprovalPage`;
+          }
+        </script>
       </div>
 
-      <div class="auth-buttons">
+      <div class="auth-buttons" id="authArea">
         <a href="/signin" class="btn-signin">Sign in →</a>
         <a href="/register" class="btn-register">Register</a>
       </div>

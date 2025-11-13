@@ -1,0 +1,307 @@
+/* recruit-detail.css
+   기존 전역 스타일을 보완하고 디자인 시안(파란 타이틀, 보라 박스, 태그, 하단 버튼 등)에 맞춘 상세 페이지 전용 스타일입니다.
+*/
+
+/* 컨테이너 기본 */
+.recruit-detail {
+  padding: 28px;
+  background: #ffffff;
+  border-radius: 12px;
+  color: #333;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 제목 섹션 */
+.title-section {
+  margin-bottom: 18px;
+}
+
+.title-section h1 {
+  font-size: 28px;
+  color: #00BFFF;
+  margin: 8px 0;
+  padding: 18px 20px;
+  background: #ffffff;
+  border: 1px solid #00BFFF;
+  border-radius: 8px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+}
+
+/* 하단에 파란 라인 강조 */
+.title-underline {
+  height: 3px;
+  background: linear-gradient(90deg, #00BFFF 0%, #00BFFF 100%);
+  border-radius: 2px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* 요약 카드(기간 / 위치) */
+.summary-section {
+  margin-top: 16px;
+}
+
+.summary-card {
+  background: #ffffff; /* ✅ 통일된 흰색 배경 */
+  border: 1px solid #00BFFF; /* ✅ 파란색 테두리 */
+  border-radius: 10px;
+  padding: 16px 20px;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* ✅ 날짜/주소 사이 간격 */
+  box-shadow: 0 2px 8px rgba(0, 191, 255, 0.08); /* ✅ 부드러운 그림자 */
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f9fcff; /* ✅ 두 줄 모두 동일한 연한 파랑 배경 */
+  border: 1px solid #e2f5ff; /* ✅ 동일한 연한 테두리 */
+}
+
+.summary-row .icon {
+  font-size: 18px;
+  color: #00BFFF;
+}
+
+/* 메인 본문 */
+.content-section {
+  margin-top: 24px;
+}
+
+.content-box {
+  margin-top: 12px;
+  min-height: 220px;
+  border-radius: 8px;
+  padding: 30px 24px;
+  background: #ffffff;
+  border: 1px solid #00BFFF;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 본문 안 강조 텍스트 */
+.content-box .lead {
+  color: #00BFFF;
+  font-size: 20px;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+/* 포인트 점 */
+.content-box .accent-dot {
+  position: absolute;
+  right: 28px;
+  bottom: 12px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 3px solid #ff4db2;
+  background: transparent;
+}
+
+/* ================= 조건 / 유형 / 승인자 ================= */
+.conditions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+/* ✅ 동행 조건의 불릿 제거 */
+.condition-group ul {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+/* 카드 형태의 각 섹션 */
+.condition-group {
+  background: #ffffff;
+  border: 1px solid #d8f0ff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 6px rgba(0, 191, 255, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+}
+
+/* 남자 */
+#approvalsList-server .tag.male,
+#approvalsList-client .tag.male {
+  background: #f0faff;
+  border: 1px solid #bde8ff;
+  color: #00BFFF;
+}
+
+/* 여자 */
+#approvalsList-server .tag.female,
+#approvalsList-client .tag.female {
+  background: #fff7fa;
+  border: 1px solid #ffbcd6;
+  color: #ff4d88;
+}
+
+.condition-group:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.15);
+}
+
+/* 제목 (동행 조건, 동행 유형, 같이 가는 사람) */
+.condition-group > strong {
+  display: inline-block;
+  color: #00BFFF;
+  font-size: 18px;
+  font-weight: 600;
+  border-left: 4px solid #00BFFF;
+  padding-left: 10px;
+  margin-bottom: 14px;
+}
+
+/* 태그 리스트 */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* 기본 태그 스타일 */
+.tag {
+  background: #f0faff;
+  border: 1px solid #bde8ff;
+  color: #007fbf;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.tag:hover {
+  background: #e1f5ff;
+  transform: scale(1.05);
+}
+
+#categoryText-server,
+#categoryText-client {
+  display: block; /* 🔥 inline-block → block 으로 변경 */
+  background: #fff6e8;
+  border: 1px solid #ffd9a8;
+  color: #ff9500;
+  padding: 8px 14px;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 10px;
+  width: fit-content; /* 🔥 텍스트 길이에 맞게 */
+}
+
+#approvalsList-server .tag,
+#approvalsList-client .tag {
+  background: #fff7fa;
+  border: 1px solid #ffbcd6;
+  color: #ff4d88;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#approvalsList-server .tag::before,
+#approvalsList-client .tag::before {
+  content: "👤";
+  font-size: 15px;
+}
+
+/* 버튼(하단) */
+.action-section {
+  margin-top: 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+}
+
+.action-wrap {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  width: 100%;
+}
+
+/* 버튼 */
+.btn {
+  border: none;
+  padding: 12px 26px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  transition: transform .08s ease, box-shadow .12s ease, filter .08s ease;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.05);
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 191, 255, 0.12);
+}
+
+/* 버튼 색상 */
+.btn-primary {
+  background: #00BFFF;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  filter: brightness(0.95);
+}
+
+.btn-secondary {
+  background: #00baff14;
+  color: #00BFFF;
+  border: 1px solid rgba(0, 191, 255, 0.12);
+}
+
+.btn-danger {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+/* 반응형 */
+@media (max-width: 1100px) {
+  .conditions-section {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 760px) {
+  .title-section h1 {
+    font-size: 22px;
+    padding: 12px 14px;
+  }
+
+  .content-box {
+    padding: 18px;
+  }
+
+  .btn {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .action-section {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+}

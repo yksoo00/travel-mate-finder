@@ -15,6 +15,9 @@ public interface RecruitRepository extends JpaRepository<Recruit, Long>,
     @EntityGraph(attributePaths = {"member"})
     Page<Recruit> findAll(Specification<Recruit> spec, Pageable pageable);
 
-
     Optional<Recruit> findByMember_No(Long memberNo);
+
+    Page<Recruit> findAllByTouristSpotId(Long touristSpotId, Pageable pageable);
+
+    Page<Recruit> findAllByMember_No(Long no, Pageable pageable);
 }
