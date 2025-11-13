@@ -40,19 +40,22 @@ public class JwtConfig {
             .sessionManagement(
                 sesstion -> sesstion.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             ).authorizeHttpRequests(auth -> auth
+                .requestMatchers("/myPage/**", "/loginForm/**", "/fragments/profile-view/**")
+                .permitAll()
                 .requestMatchers("/auth/*").permitAll()
                 .requestMatchers("/path/**").permitAll()
+                .requestMatchers("/api/v1/myPage/**").permitAll()
                 .requestMatchers("/api/v1/products/**").permitAll()
                 .requestMatchers("/api/v1/review/**").permitAll()
                 .requestMatchers("/recruit/**").permitAll()
                 .requestMatchers("/layout/**").permitAll()
-                .requestMatchers("/navbar/**", "/loginForm/**").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**",
-                    "/static/**",
-                    "/images/**")
+                .requestMatchers("/navbar/**").permitAll()
+                .requestMatchers("/uploads/**", "/css/**", "/js/**", "/images/**", "/fonts/**",
+                    "/static/**", "/images/**")
                 .permitAll()
                 .requestMatchers("/favicon.ico").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/tourist-spots", "/api/v1/tourist-spots/*")
+                .requestMatchers(HttpMethod.GET, "/api/v1/tourist-spots", "/api/v1/tourist-spots/*",
+                    "/api/v1/myPage/trips/**")
                 .permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/tourist-spots").hasAnyRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/tourist-spots/*").hasAnyRole("ADMIN")

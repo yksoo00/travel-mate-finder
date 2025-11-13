@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>마이페이지 - OUIGO</title>
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/mypage.css}">
+</head>
+<body>
+
+<div th:replace="~{navbar :: navbar}"></div>
+
+<div class="main-layout">
+
+  <!-- ⭐ 왼쪽: map-container 안에 leftContainer 추가 -->
+  <div class="map-container">
+    <div id="leftContainer"></div>
+  </div>
+
+  <!-- 오른쪽 그대로 유지 -->
+  <div class="content-container">
+    <div id="rightContainer">
+      <div class="trip-card-section">
+        <div class="trip-card-header">
+          <div class="trip-card-title">내 여행 카드 <span class="card-id">Trip Card</span></div>
+        </div>
+
+        <div class="card-stats">
+          <div class="stat-item">
+            <div class="stat-icon">🗺️</div>
+            <span id="dstcCnt" class="stat-value">0</span>
+            <div class="stat-label">Destination</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">📍</div>
+            <span id="ttlCnt" class="stat-value">0</span>
+            <div class="stat-label">Spot</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">📅</div>
+            <span id="dayCnt" class="stat-value">0</span>
+            <div class="stat-label">Days</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trips-section">
+        <div class="trips-header">
+          <div class="trips-title">내 여행 일정</div>
+          <button class="btn-add-trip" onclick="createTrip()">일정 추가</button>
+        </div>
+        <div id="tripList" class="trip-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/mypage.js}"></script>
+<script th:src="@{/js/api.js}" defer></script>
+</body>
+</html>

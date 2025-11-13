@@ -1,0 +1,40 @@
+<div class="profile-container" id="profileEdit">
+
+  <div class="profile-card">
+    <div class="profile-image-edit">
+      <img id="profileImagePreview"
+           class="profile-image-preview"
+           src="/images/default-profile.png"
+           onclick="document.getElementById('profileImageInput').click()"
+           style="cursor: pointer">
+
+      <input id="profileImageInput"
+             type="file"
+             accept="image/*"
+             onchange="previewImage(event)"
+             style="display:none">
+    </div>
+
+
+    <div class="form-group">
+      <label>닉네임</label>
+      <input id="nickNameInput" class="form-input">
+    </div>
+
+    <div class="form-group">
+      <label>이메일</label>
+      <input id="emailInput" class="form-input">
+    </div>
+
+    <div class="form-group">
+      <label>자기소개</label>
+      <textarea id="introInput" class="form-textarea"></textarea>
+    </div>
+
+    <div class="button-group">
+      <button class="btn-cancel" onclick="cancelEdit()">취소</button>
+      <button class="btn-submit" onclick="submitProfileEdit()">저장</button>
+    </div>
+  </div>
+
+</div>

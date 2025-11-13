@@ -79,4 +79,59 @@ public class PathController {
         model.addAttribute("recruitId", recruitId);
         return "layout";
     }
+
+    // 마이페이지 홈
+
+    @GetMapping("/myPage")
+    public String myPageHome(@RequestParam(required = false) Long memberNo, Model model) {
+        if (memberNo != null) {
+            model.addAttribute("memberNo", memberNo);
+        }
+        return "myPage/myPageHome";
+    }
+
+    // 프로필 수정
+
+    @GetMapping("/myPage/profileEdit")
+    public String profileEdit(@RequestParam Long memberNo, Model model) {
+        model.addAttribute("memberNo", memberNo);
+        return "myPage/profileEdit";
+    }
+
+    // 여행 일정 등록
+    
+    // 여행 일정 수정
+
+    @GetMapping("/myPage/tripEdit")
+    public String tripEdit(@RequestParam Long memberNo, @RequestParam Long tripId, Model model) {
+        model.addAttribute("tripId", tripId);
+        model.addAttribute("memberNo", memberNo);
+        return "myPage/tripEdit";
+    }
+
+    @GetMapping("/profile-view")
+    public String profileView() {
+        return "fragments/profile-view";
+    }
+
+    @GetMapping("/profile-edit")
+    public String profileEdit() {
+        return "fragments/profile-edit";
+    }
+
+    @GetMapping("/myPage/right/default")
+    public String rightDefault() {
+        return "mypage/rightDefault :: rightDefault";
+    }
+
+    @GetMapping("/myPage/trip/create")
+    public String tripCreate() {
+        return "mypage/tripCreate :: tripCreate";
+    }
+
+    @GetMapping("/myPage/trip/edit/{tripId}")
+    public String tripEdit(@PathVariable Long tripId, Model model) {
+        model.addAttribute("tripId", tripId);
+        return "mypage/tripEdit :: tripEdit";
+    }
 }

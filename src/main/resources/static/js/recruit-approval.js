@@ -1,4 +1,7 @@
+// ======================= 전역 설정 =======================
 document.addEventListener("DOMContentLoaded", async () => {
+
+  // ❗ 우선 로그인 체크
   const token = localStorage.getItem("accessToken");
   if (!token) {
     alert("로그인이 필요합니다.");
@@ -13,31 +16,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   const myRecruitTableBody = document.querySelector("#myRecruitTable tbody");
   const myApplyTableBody = document.querySelector("#appliedRecruitTable tbody");
 
-  // ✅ 페이지네이션
+  // ====================== 페이징 ======================
   function renderPagination(containerId, currentPage, totalPages,
       onPageChange) {
     const container = document.getElementById(containerId);
     container.innerHTML = "";
+
     if (totalPages <= 1) {
       return;
     }
 
-    const createBtn = (html, disabled, active, onClick) => {
-      const btn = document.createElement("button");
-      btn.innerHTML = html;
+    const btn = (html, disabled, active, onClick) => {
+      const el = document.createElement("button");
+      el.innerHTML = html;
       if (disabled) {
-        btn.disabled = true;
+        el.disabled = true;
       }
       if (active) {
-        btn.classList.add("active");
+        el.classList.add("active");
       }
-      btn.addEventListener("click", onClick);
-      return btn;
+      el.addEventListener("click", onClick);
+      return el;
     };
 
     container.appendChild(
-        createBtn("&laquo;", currentPage === 0, false, () => onPageChange(0)));
-    container.appendChild(createBtn("&lsaquo;", currentPage === 0, false,
+        btn("&laquo;", currentPage === 0, false, () => onPageChange(0)));
+    container.appendChild(btn("&lsaquo;", currentPage === 0, false,
         () => onPageChange(currentPage - 1)));
 
     const maxVisible = 5;
@@ -49,32 +53,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     for (let i = start; i < end; i++) {
       container.appendChild(
-          createBtn(i + 1, false, i === currentPage, () => onPageChange(i)));
+          btn(i + 1, false, i === currentPage, () => onPageChange(i)));
     }
 
-    container.appendChild(
-        createBtn("&rsaquo;", currentPage >= totalPages - 1, false,
-            () => onPageChange(currentPage + 1)));
-    container.appendChild(
-        createBtn("&raquo;", currentPage >= totalPages - 1, false,
-            () => onPageChange(totalPages - 1)));
+    container.appendChild(btn("&rsaquo;", currentPage >= totalPages - 1, false,
+        () => onPageChange(currentPage + 1)));
+    container.appendChild(btn("&raquo;", currentPage >= totalPages - 1, false,
+        () => onPageChange(totalPages - 1)));
   }
 
-  // ✅ 승인/거절 API
+  // ================= 승 인 / 거 절 =================
   async function updateStatus(recruitId, memberNo, action) {
     try {
-      const res = await fetch(`/api/v1/approval/${action}`, {
+      const res = await apiFetch(`/api/v1/approval/${action}`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({recruitId, memberNo}),
       });
       const result = await res.json();
+
       if (res.ok) {
         alert(result.message || "처리 완료");
-        await loadMyRecruitApprovals();
+        loadMyRecruitApprovals();
       } else {
         alert(result.message || "처리 실패");
       }
@@ -83,21 +82,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ✅ 삭제 API
+  // ================= 삭제 =================
   async function deleteApproval(approvalId) {
     if (!confirm("정말 삭제하시겠습니까?")) {
       return;
     }
+
     try {
-      const res = await fetch(`/api/v1/approval/${approvalId}`, {
+      const res = await apiFetch(`/api/v1/approval/${approvalId}`, {
         method: "DELETE",
-        headers: {Authorization: `Bearer ${token}`},
       });
       const result = await res.json();
+
       if (res.ok) {
         alert(result.message || "삭제 완료");
-        await loadMyRecruitApprovals();
-        await loadMyApprovals();
+        loadMyRecruitApprovals();
+        loadMyApprovals();
       } else {
         alert(result.message || "삭제 실패");
       }
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ✅ 삭제 버튼 이벤트 위임 (두 테이블 모두 커버)
+  // 삭제 버튼 이벤트 위임
   document.addEventListener("click", (e) => {
     const btn = e.target.closest(".btn-delete");
     if (btn && btn.dataset.id) {
@@ -114,12 +114,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // ✅ 내 모집글 승인 관리
+  // =================== 내 모집글 승인 리스트 ===================
   async function loadMyRecruitApprovals() {
     try {
-      const res = await fetch(`/api/v1/approval/MyRecruit`, {
-        headers: {Authorization: `Bearer ${token}`},
-      });
+      const res = await apiFetch(`/api/v1/approval/MyRecruit`);
       const result = await res.json();
       const list = result.data?.content || [];
       const totalPages = result.data?.totalPages ?? 1;
@@ -134,7 +132,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           row.innerHTML = `
             <td>${myRecruitPage * size + index + 1}</td>
             <td>${item.memberNickName}</td>
-            <td><button class="tourist-btn" data-id="${item.recruitId}">${item.touristSpot}</button></td>
+            <td>
+              <button class="tourist-btn" data-id="${item.recruitId}">
+                ${item.touristSpot}
+              </button>
+            </td>
             <td>
               <button class="btn btn-approve">승인</button>
               <button class="btn btn-reject">거절</button>
@@ -145,34 +147,36 @@ document.addEventListener("DOMContentLoaded", async () => {
           row.querySelector(".tourist-btn").addEventListener("click", () =>
               window.location.href = `/recruit/${item.recruitId}`
           );
+
           row.querySelector(".btn-approve").addEventListener("click", () =>
               updateStatus(item.recruitId, item.memberNo, "approved")
           );
+
           row.querySelector(".btn-reject").addEventListener("click", () =>
               updateStatus(item.recruitId, item.memberNo, "rejected")
           );
+
           myRecruitTableBody.appendChild(row);
         });
       }
 
       renderPagination("myRecruitPagination", myRecruitPage, totalPages,
-          (page) => {
-            myRecruitPage = page;
+          (p) => {
+            myRecruitPage = p;
             loadMyRecruitApprovals();
           });
+
     } catch (err) {
       console.error("❌ 내 모집글 조회 실패:", err);
       myRecruitTableBody.innerHTML = `<tr><td colspan="5" class="empty">데이터 불러오기 실패</td></tr>`;
     }
   }
 
-  // ✅ 내가 신청한 모집
+  // =================== 내가 신청한 모집 ===================
   async function loadMyApprovals() {
     try {
-      const res = await fetch(
-          `/api/v1/approval/My?page=${myApplyPage}&size=${size}`, {
-            headers: {Authorization: `Bearer ${token}`},
-          });
+      const res = await apiFetch(
+          `/api/v1/approval/My?page=${myApplyPage}&size=${size}`);
       const result = await res.json();
       const list = result.data?.content || [];
       const totalPages = result.data?.totalPages ?? 1;
@@ -187,31 +191,37 @@ document.addEventListener("DOMContentLoaded", async () => {
           row.innerHTML = `
             <td>${myApplyPage * size + index + 1}</td>
             <td>${item.memberNickName}</td>
-            <td><button class="tourist-btn" data-id="${item.recruitId}">${item.touristSpot}</button></td>
-<td>
-  <span class="status-tag ${item.status.toLowerCase()}">${item.status}</span>
-</td>
+            <td>
+              <button class="tourist-btn" data-id="${item.recruitId}">
+                ${item.touristSpot}
+              </button>
+            </td>
+            <td>
+              <span class="status-tag ${item.status.toLowerCase()}">${item.status}</span>
+            </td>
             <td><button class="btn btn-delete" data-id="${item.approvalId}">제거</button></td>
           `;
 
           row.querySelector(".tourist-btn").addEventListener("click", () =>
               window.location.href = `/recruit/${item.recruitId}`
           );
+
           myApplyTableBody.appendChild(row);
         });
       }
 
-      renderPagination("myApplyPagination", myApplyPage, totalPages, (page) => {
-        myApplyPage = page;
+      renderPagination("myApplyPagination", myApplyPage, totalPages, (p) => {
+        myApplyPage = p;
         loadMyApprovals();
       });
+
     } catch (err) {
       console.error("❌ 내가 신청한 모집 조회 실패:", err);
       myApplyTableBody.innerHTML = `<tr><td colspan="5" class="empty">데이터 불러오기 실패</td></tr>`;
     }
   }
 
-  // ✅ 첫 로딩
+  // =================== 첫 로딩 ===================
   await loadMyRecruitApprovals();
   await loadMyApprovals();
 });

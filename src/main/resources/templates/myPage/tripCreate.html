@@ -1,0 +1,98 @@
+<div th:fragment="tripCreate">
+
+  <div class="edit-container">
+
+    <!-- Header with Buttons -->
+    <div class="edit-header">
+      <div class="edit-title">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00BFFF"
+             stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        여행 일정 등록
+      </div>
+
+      <!-- Button Group -->
+      <div class="header-button-group">
+        <button type="button" class="btn-header-cancel" onclick="cancelCreate()">취소</button>
+        <button type="button" class="btn-header-submit" onclick="submitTripFromButton()">
+          등록하기
+        </button>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form id="tripCreateForm" onsubmit="submitTrip(event)">
+
+      <!-- 여행 지역 -->
+      <div class="form-group">
+        <label class="form-label">여행 지역 <span class="required">*</span></label>
+        <input type="text" id="destination" class="form-input"
+               placeholder="예: 제주도, 부산, 강릉" required>
+      </div>
+
+      <!-- 여행 관광지 -->
+      <div class="form-group">
+        <label class="form-label">여행 관광지 <span class="required">*</span></label>
+        <input type="text" id="title" class="form-input"
+               placeholder="예: 성산일출봉, 해운대 해수욕장" required>
+      </div>
+
+      <!-- 날짜 -->
+      <div class="date-group">
+        <div class="form-group">
+          <label class="form-label">시작일 <span class="required">*</span></label>
+          <input type="date" id="startDate" class="form-input" required onchange="validateDates()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">종료일 <span class="required">*</span></label>
+          <input type="date" id="endDate" class="form-input" required onchange="validateDates()">
+        </div>
+      </div>
+
+      <!-- 예산 -->
+      <div class="form-group">
+        <label class="form-label">예산 (원)</label>
+        <input type="number" id="budget" class="form-input" min="0" step="10000"
+               placeholder="예: 500000">
+      </div>
+
+      <!-- 메모 -->
+      <div class="form-group">
+        <label class="form-label">여행 메모</label>
+        <textarea id="memo" class="form-textarea" maxlength="100"
+                  placeholder="여행 메모를 입력하세요 (최대 100자)"
+                  oninput="updateCharCount()"></textarea>
+        <div class="char-count">
+          <span id="charCount">0</span> / 100
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Footer Cancel Button (수정 UI처럼 깔끔하게) -->
+    <div class="button-group">
+      <button class="btn-cancel" onclick="cancelCreate()">취소</button>
+      <button class="btn-submit" onclick="submitTripFromButton()">등록하기</button>
+    </div>
+
+  </div>
+
+  <!-- JS -->
+  <script>
+    // 날짜 검증
+    function validateDates() {
+      const start = document.getElementById("startDate").value;
+      const end = document.getElementById("endDate").value;
+
+      if (start && end && new Date(start) > new Date(end)) {
+        alert("종료일은 시작일보다 이후여야 합니다.");
+        document.getElementById("endDate").value = "";
+      }
+    }
+
+
+  </script>
+
+</div>

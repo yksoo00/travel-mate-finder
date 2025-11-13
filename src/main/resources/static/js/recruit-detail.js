@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   window.recruitDetailLoaded = true;
+
   const container = document.getElementById('recruitDetailContainer');
   const recruitId = container?.dataset.recruitId;
 
@@ -11,8 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  const token = localStorage.getItem('accessToken');
-  const loggedInMemberId = localStorage.getItem('memberId'); // ✅ 로그인한 사용자 ID
+  const loggedInMemberId = localStorage.getItem('memberId'); // 로그인 ID
 
   const conditionMap = {
     G100: "남자",
@@ -26,21 +26,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   try {
-    const response = await fetch(`/api/v1/recruit/${recruitId}`, {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
+    // ============================================================
+    // ✅ 모집글 상세 조회 (fetch → apiFetch)
+    // ============================================================
+    const response = await apiFetch(`/api/v1/recruit/${recruitId}`);
     if (!response.ok) {
       throw new Error('상세 조회 실패');
     }
-
     const result = await response.json();
     const data = result.data;
 
-    // ✅ 여행장 정보 표시
+    // ========== 여행장 정보 ==========
     const ownerInfo = document.getElementById('recruitOwnerInfo');
     if (ownerInfo && data.memberName) {
       ownerInfo.innerHTML = '';
@@ -52,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       ownerInfo.appendChild(div);
     }
 
-    // ✅ 기본 데이터 세팅
+    // 기본 표시
     document.getElementById(
         'recruitTitle-client').textContent = data.recruitTitle;
     document.getElementById(
@@ -62,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById(
         'touristSpotAddress-client').textContent = data.touristSpotAddress;
 
-    // ✅ 조건 렌더링
+    // ========== 조건 ==========
     const conditionsList = document.getElementById('conditionsList-client');
     conditionsList.innerHTML = '';
     data.conditions?.forEach(c => {
@@ -72,12 +68,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       conditionsList.appendChild(li);
     });
 
-    // ✅ 동행 유형
+    // ========== 카테고리 ==========
     const categoryEl = document.getElementById('categoryText-client');
     categoryEl.textContent = data.category || '미정';
     categoryEl.className = 'tag type';
 
-// ✅ 같이 가는 사람 (APPROVED만 표시)
+    // ========== 승인된 동행자 ==========
     const approvalsList = document.getElementById('approvalsList-client');
     approvalsList.innerHTML = '';
 
@@ -99,7 +95,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     }
 
-    // ✅ 본인 글이면 수정/삭제 버튼 표시
+    // ============================================================
+    // ✅ 본인 글이면 수정/삭제 버튼 노출
+    // ============================================================
     const actionWrap = document.querySelector('.action-wrap');
     if (loggedInMemberId && data.memberId && loggedInMemberId
         === data.memberId) {
@@ -115,22 +113,24 @@ document.addEventListener('DOMContentLoaded', async () => {
       deleteBtn.id = 'btn-delete';
       deleteBtn.className = 'btn btn-danger';
       deleteBtn.textContent = '삭제하기';
+
       deleteBtn.addEventListener('click', async () => {
         if (!confirm('정말 삭제하시겠습니까?')) {
           return;
         }
+
         try {
-          const res = await fetch(`/api/v1/recruit/${recruitId}`, {
-            method: 'DELETE',
-            headers: {'Authorization': `Bearer ${token}`}
-          });
+          const res = await apiFetch(`/api/v1/recruit/${recruitId}`,
+              {method: 'DELETE'});
           const result = await res.json();
+
           if (res.ok) {
             alert(result.message || '삭제 성공');
             window.location.href = '/layout';
           } else {
             alert(result.message || '삭제 실패');
           }
+
         } catch (err) {
           console.error('삭제 오류:', err);
           alert('서버 통신 중 오류가 발생했습니다.');
@@ -142,10 +142,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       actionWrap.insertBefore(editBtn, applyBtn);
     }
 
+    // ============================================================
     // ✅ 참여하기 버튼
+    // ============================================================
     const applyBtn = document.getElementById('btn-apply');
+
     applyBtn.addEventListener('click', async () => {
-      if (!token) {
+      if (!localStorage.getItem("accessToken")) {
         alert('로그인이 필요합니다.');
         window.location.href = '/loginForm';
         return;
@@ -156,19 +159,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       try {
-        const res = await fetch(
-            `${window.location.origin}/api/v1/recruit/participation/${recruitId}`,
+        const res = await apiFetch(`/api/v1/recruit/participation/${recruitId}`,
             {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              }
+              method: 'POST'
             });
 
         const result = await res.json();
+
         if (res.ok) {
-          alert(result.message || '참여 신청 되었습니다.');
+          alert(result.message || '참여 신청 완료');
           window.location.href = '/layout';
         } else {
           const msg = result.message || '참여 실패';
@@ -178,6 +177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert(msg);
           }
         }
+
       } catch (err) {
         console.error(err);
         alert('참여 중 오류가 발생했습니다.');

@@ -2,11 +2,24 @@ package com.multi.ouigo.domain.trip.entity;
 
 import com.multi.ouigo.common.entitiy.BaseEntity;
 import com.multi.ouigo.domain.member.entity.Member;
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 
 @Entity
@@ -15,6 +28,7 @@ import java.time.temporal.ChronoUnit;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Where(clause = "del_yn = 0")
 public class Trip extends BaseEntity {
 
     @Id
@@ -62,9 +76,9 @@ public class Trip extends BaseEntity {
 
     // D-day 계산
 
-    public long getDday(){
+    public long getDday() {
 
-        if (startDate == null){
+        if (startDate == null) {
             return 0;
         }
 
@@ -73,10 +87,9 @@ public class Trip extends BaseEntity {
     }
 
 
-
     // 여행 일정 수정
     public void update(String destination, String title, LocalDate startDate,
-                       LocalDate endDate, int budget, String memo) {
+        LocalDate endDate, int budget, String memo) {
         this.destination = destination;
         this.title = title;
         this.startDate = startDate;

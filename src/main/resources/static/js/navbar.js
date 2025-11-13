@@ -12,19 +12,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
     `;
 
-    // ✅ 로그아웃 기능
+    // ✅ 로그아웃 기능 (apiFetch 기반)
     document.getElementById("logoutBtn").addEventListener("click", async () => {
       try {
-        const res = await fetch("http://localhost:8081/auth/logout", {
-          method: "GET",
-          headers: {
-            "Authorization": token
-          }
+        const res = await apiFetch("/auth/logout", {
+          method: "GET"
         });
+
         const result = await res.json();
+
         if (res.ok) {
           alert(result.message || "로그아웃 되었습니다.");
-          localStorage.clear(); // ✅ 토큰 제거
+
+          // 로컬스토리지 토큰 제거
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("memberId");
+
           window.location.href = "/loginForm";
         } else {
           alert(result.message || "로그아웃 실패");
@@ -34,7 +38,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         alert("로그아웃 중 오류가 발생했습니다.");
       }
     });
-
     // ✅ 비로그인 상태
   } else {
     authArea.innerHTML = `
