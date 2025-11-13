@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -18,11 +19,10 @@ public class MemController {
 
     private final MemService memService;
 
-     // 마이페이지 - 전체 정보 조회 GET (/api/v1/mypage)
+    // 마이페이지 - 전체 정보 조회 GET (/api/v1/mypage)
 
     @GetMapping
-    public ResponseEntity<ResponseDto> getMemberProfile(@RequestParam(name = "memberNo") Long memberNo)
-        {
+    public ResponseEntity<ResponseDto> getMemberProfile(@RequestParam(name = "memberNo") Long memberNo) {
 
         log.info("[MemController] 회원 정보 조회 - memberNo: {}", memberNo);
 
@@ -32,13 +32,10 @@ public class MemController {
                         "회원 정보 조회 성공",
                         memService.getMemberProfile(memberNo)
                 ));
-        }
-
+    }
 
 
     // 마이페이지 - 기본 정보 수정 PUT (/api/v1/mypage)
-
-
 
     @PutMapping
     public ResponseEntity<ResponseDto> updateMemberProfile(
@@ -55,4 +52,23 @@ public class MemController {
                 ));
     }
 
+    // 프로필 이미지 업로드
+    @PostMapping("/profile/image")
+    public ResponseEntity<ResponseDto> uploadProfileImage(
+            @RequestParam Long memberNo,
+            @RequestParam("file") MultipartFile file) {  // ✅ 파일 받기!
+
+        log.info("[MemController] 프로필 이미지 업로드 - memberNo: {}, 파일명: {}",
+                memberNo, file.getOriginalFilename());
+
+        String imageUrl = memService.uploadProfileImage(memberNo, file);
+
+        return ResponseEntity.ok()
+                .body(new ResponseDto(
+                        HttpStatus.OK,
+                        "프로필 이미지 업로드 성공",
+                        imageUrl
+                ));
+
+    }
 }

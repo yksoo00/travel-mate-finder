@@ -82,7 +82,7 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
 
-    const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb2huIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTc2MjkzNTAxMH0.Gyxt6W8gl_A04_y9jthFSAtzdla5UIdF0p5RhF9vsUMS0_u0FGIu4G3eSU3ngwQoZfpct2UXM2vx6wMgWwkojQ";
+    const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb2huIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTc2MzAxMjA3OH0.9ZyMi_h2zZRbrpCryRBElhvXCRuaqI00S-ML7uYIqwU0JGmlPzjv9ksnyaH2O33sWXnLGlQeqAh8AAmPFvGoNg";
     const memberNo = /*[[${memberNo}]]*/ 1;
     /*]]>*/
 
@@ -93,13 +93,23 @@
     // 프로필 로드
     async function loadProfile() {
         try {
-            //  /api/v1/myPage
             const response = await fetch(`/api/v1/myPage?memberNo=${memberNo}`);
             const data = await response.json();
 
             if (data.status === 200) {
                 const profile = data.data;
-                document.getElementById('profileImagePreview').src = profile.profileImage || '/images/default-profile.png';
+
+                let imageUrl = profile.profileImage;
+
+                if (!imageUrl || imageUrl === 'null' || imageUrl === '') {
+                    // 기본 이미지 처리
+                    const initials = profile.nickName ? profile.nickName.charAt(0).toUpperCase() : '?';
+                }
+
+                // 현재 이미지 URL 저장
+                currentImageUrl = profile.profileImage || '/images/default-profile.png';
+                document.getElementById('profileImagePreview').src = currentImageUrl;
+
                 document.getElementById('nickName').value = profile.nickName;
                 document.getElementById('email').value = profile.email;
                 document.getElementById('introduction').value = profile.introduction || '';
@@ -111,9 +121,28 @@
         }
     }
 
+    // 이미지 미리보기 + 파일 저장
     function previewImage(event) {
         const file = event.target.files[0];
         if (file) {
+            // 파일 크기 체크 (5MB 제한)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('파일 크기는 5MB 이하만 가능합니다.');
+                event.target.value = '';
+                return;
+            }
+
+            // 이미지 파일 체크
+            if (!file.type.startsWith('image/')) {
+                alert('이미지 파일만 업로드 가능합니다.');
+                event.target.value = '';
+                return;
+            }
+
+            // 파일 저장
+            selectedFile = file;
+
+            // 미리보기 표시
             const reader = new FileReader();
             reader.onload = function(e) {
                 document.getElementById('profileImagePreview').src = e.target.result;
@@ -127,19 +156,30 @@
         document.getElementById('charCount').textContent = intro.length;
     }
 
-    // 프로필
+    // 프로필 수정 제출
     async function submitProfile(event) {
         event.preventDefault();
 
-        const profileData = {
-            nickName: document.getElementById('nickName').value,
-            email: document.getElementById('email').value,
-            profileImage: document.getElementById('profileImagePreview').src,
-            introduction: document.getElementById('introduction').value
-        };
-
         try {
-            // ✅ /api/v1/myPage/profile → /api/v1/myPage
+
+            let finalImageUrl = currentImageUrl;
+
+            if (selectedFile) {
+                console.log('이미지 업로드 시작...');
+                finalImageUrl = await uploadProfileImage(selectedFile);
+                console.log('이미지 업로드 완료:', finalImageUrl);
+            }
+
+            // 프로필 정보 업데이트
+            const profileData = {
+                nickName: document.getElementById('nickName').value,
+                email: document.getElementById('email').value,
+                profileImage: finalImageUrl,  // URL만 저장!
+                introduction: document.getElementById('introduction').value
+            };
+
+            console.log('프로필 업데이트 데이터:', profileData);
+
             const response = await fetch(`/api/v1/myPage?memberNo=${memberNo}`, {
                 method: 'PUT',
                 headers: {
@@ -160,6 +200,33 @@
         } catch (error) {
             console.error('프로필 수정 오류:', error);
             alert('서버 오류가 발생했습니다.');
+        }
+    }
+
+    // 이미지 파일 업로드
+    async function uploadProfileImage(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch(`/api/v1/myPage/profile/image?memberNo=${memberNo}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData  // FormData로 전송!
+            });
+
+            const data = await response.json();
+
+            if (data.status === 200) {
+                return data.data;  // 업로드된 이미지 URL 반환
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error('이미지 업로드 오류:', error);
+            throw error;
         }
     }
 

@@ -1,9 +1,9 @@
 // ==================== 마이페이지 JavaScript ====================
 
 // ✅ 전역 토큰 (모든 요청에 자동으로 붙음)
-const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb2huIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTc2MjkzNTAxMH0.Gyxt6W8gl_A04_y9jthFSAtzdla5UIdF0p5RhF9vsUMS0_u0FGIu4G3eSU3ngwQoZfpct2UXM2vx6wMgWwkojQ";
+const token = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb2huIiwiYXV0aCI6IlJPTEVfVVNFUiIsImV4cCI6MTc2MzAxMjA3OH0.9ZyMi_h2zZRbrpCryRBElhvXCRuaqI00S-ML7uYIqwU0JGmlPzjv9ksnyaH2O33sWXnLGlQeqAh8AAmPFvGoNg";
 
-// ✅ 전역 fetch 오버라이드 (모든 요청에 자동으로 Authorization 추가)
+// 전역 fetch 오버라이드 (모든 요청에 자동으로 Authorization 추가)
 const _originalFetch = window.fetch;
 window.fetch = async (url, options = {}) => {
     const newOptions = {
@@ -58,6 +58,12 @@ async function loadProfile() {
 
 // 프로필 표시
 function displayProfile(profile) {
+    let imageUrl = profile.profileImage;
+    if (!imageUrl || imageUrl === 'null' || imageUrl === '') {
+        // UI Avatars 서비스 사용 (이니셜로 이미지 생성)
+        const name = profile.nickName || 'User';
+        imageUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=00BFFF&color=fff&size=200&bold=true`;
+    }
     document.getElementById('profileImage').src = profile.profileImage || '/images/default-profile.png';
     document.getElementById('nickName').textContent = profile.nickName || '닉네임 없음';
     document.getElementById('age').textContent = profile.age ? `${profile.age}세` : '나이 미공개';
