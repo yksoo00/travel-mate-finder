@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관광지 등록</title>
+
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/recruit.css}">
+  <link rel="stylesheet" th:href="@{/css/tourist.css}">
+
+  <link rel="stylesheet" th:href="@{/css/touristCreateForm.css}">
+
+  <script type="text/javascript"
+          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8b23243ecce1d67f7d49784724586afa&libraries=services"></script>
+
+</head>
+<body>
+
+<nav class="navbar" th:replace="~{navbar :: navbar}"></nav>
+
+<div class="main-layout">
+
+  <div class="map-container">
+    <div class="recruit-page" id="map-page">
+      <div class="recruit-header">
+        <h1 class="recruit-title">카카오 맵</h1>
+      </div>
+      <div id="map-content">
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-container">
+    <div class="recruit-page" id="create-page">
+
+      <div class="form-page-header">
+        <h1 class="form-page-title">관광지 등록</h1>
+      </div>
+
+      <form id="tourist-create-form"
+            action="/api/v1/tourist-spots"
+            method="post">
+
+        <div class="form-group">
+          <label for="district" class="form-label">지역</label>
+          <input type="text" id="district" name="district" class="form-control"
+                 placeholder="예: 수도권" required>
+        </div>
+
+        <div class="form-group">
+          <label for="title" class="form-label">관광지명</label>
+          <input type="text" id="title" name="title" class="form-control"
+                 placeholder="예: 경복궁" required>
+        </div>
+
+        <div class="form-group">
+          <label for="description" class="form-label">설명</label>
+          <textarea id="description" name="description" class="form-control" rows="5"
+                    placeholder="이 관광지에 대한 간단한 설명을 적어주세요."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="map-address-display" class="form-label">주소 (관광지 선택)</label>
+          <input type="text" id="map-address-display" class="form-control" disabled
+                 placeholder="지도에서 관광지를 클릭하면 자동 입력됩니다.">
+        </div>
+
+        <!-- touristSpotId 값을 숨겨서 저장 -->
+        <input type="hidden" id="touristSpotId">
+
+        <div class="form-group">
+          <label for="phone" class="form-label">전화번호</label>
+          <input type="text" id="phone" name="phone" class="form-control"
+                 placeholder="예: 02-123-4567">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">Register</button>
+          <a href="/tourist/touristListPage" class="btn-cancel">Cancel</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+<script th:src="@{/js/map.js}"></script>
+
+<script th:src="@{/js/mapClickToAddress.js}"></script>
+
+<script>
+  document.getElementById('tourist-create-form').addEventListener('submit', async function (event) {
+
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const actionUrl = form.action;   // → "/api/v1/tourist-spots"
+
+    try {
+      // 🔵 fetch → apiFetch 로 변경 (FormData 자동 처리)
+      const response = await apiFetch(actionUrl, {
+        method: "POST",
+        body: formData   // ← FormData일 때 Content-Type 자동 적용 X
+      });
+
+      if (!response.ok) {
+        throw new Error("서버 응답 오류");
+      }
+
+      const data = await response.json();
+
+      alert(data.message);
+
+      const newSpotId = data.data;
+      window.location.href = "/tourist/touristDetail?id=" + newSpotId;
+
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('등록 중 오류가 발생했습니다: ' + error.message);
+    }
+  });
+</script>
+</body>
+</html>

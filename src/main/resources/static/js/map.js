@@ -1,86 +1,54 @@
-// Kakao Map Initialization
 let map;
-let markers = [];
+let geocoder;
 
-document.addEventListener('DOMContentLoaded', function() {
-    initMap();
+document.addEventListener("DOMContentLoaded", function () {
+  const mapContainer = document.getElementById('map');
+  if (!mapContainer) {
+    console.error("❌ #map 요소를 찾을 수 없습니다.");
+    return;
+  }
+
+  const mapOption = {
+    center: new kakao.maps.LatLng(37.566826, 126.9786567),
+    level: 7
+  };
+
+  // 지도 생성
+  map = new kakao.maps.Map(mapContainer, mapOption);
+
+  // 지오코더 생성
+  geocoder = new kakao.maps.services.Geocoder();
+
+  // 전역 등록
+  window.map = map;
+  window.geocoder = geocoder;
+
+  loadAllMarkers();
 });
 
-function initMap() {
-    const container = document.getElementById('map');
-    const options = {
-        center: new kakao.maps.LatLng(37.5665, 126.9780), // Seoul coordinates
-        level: 5
-    };
-    
-    map = new kakao.maps.Map(container, options);
-    
-    // Add zoom control
-    const zoomControl = new kakao.maps.ZoomControl();
-    map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-}
+// ===============================================
+// ⭐ 전체 관광지 마커 불러오기 (apiFetch 적용)
+// ===============================================
+async function loadAllMarkers() {
+  try {
+    const response = await apiFetch(`/api/v1/tourist-spots/markers`);
 
-// Function to add marker on map
-function addMarker(lat, lng, title) {
-    const position = new kakao.maps.LatLng(lat, lng);
-    
-    const marker = new kakao.maps.Marker({
-        position: position,
-        map: map
-    });
-    
-    // Add info window if title is provided
-    if (title) {
-        const infowindow = new kakao.maps.InfoWindow({
-            content: `<div style="padding:5px;font-size:12px;">${title}</div>`
-        });
-        
-        kakao.maps.event.addListener(marker, 'mouseover', function() {
-            infowindow.open(map, marker);
-        });
-        
-        kakao.maps.event.addListener(marker, 'mouseout', function() {
-            infowindow.close();
-        });
+    if (!response.ok) {
+      console.error("❌ markers API 오류");
+      return;
     }
-    
-    markers.push(marker);
-    return marker;
-}
 
-// Function to clear all markers
-function clearMarkers() {
-    markers.forEach(marker => marker.setMap(null));
-    markers = [];
-}
+    const result = await response.json();
+    const allSpots = result.data || [];
 
-// Function to move map to specific location
-function moveMap(lat, lng, level = 5) {
-    const moveLatLon = new kakao.maps.LatLng(lat, lng);
-    map.setCenter(moveLatLon);
-    map.setLevel(level);
-}
+    console.log("📌 가져온 관광지 개수:", allSpots.length);
+    if (allSpots.length > 0) {
+      console.log("📍 첫 장소 주소:", allSpots[0].address);
+    }
 
-// Function to search location
-function searchLocation(keyword) {
-    const ps = new kakao.maps.services.Places();
-    
-    ps.keywordSearch(keyword, function(data, status, pagination) {
-        if (status === kakao.maps.services.Status.OK) {
-            const bounds = new kakao.maps.LatLngBounds();
-            
-            clearMarkers();
-            
-            for (let i = 0; i < data.length; i++) {
-                const marker = addMarker(
-                    data[i].y, 
-                    data[i].x, 
-                    data[i].place_name
-                );
-                bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-            }
-            
-            map.setBounds(bounds);
-        }
-    });
+    displayMapMarkers(allSpots);
+
+  } catch (error) {
+    console.error("❌ 전체 마커 로드 실패:", error);
+  }
 }

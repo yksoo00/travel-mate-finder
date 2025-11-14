@@ -4,12 +4,32 @@ window.addEventListener("load", () => {
   const startDateInput = document.getElementById('startDate');
   const endDateInput = document.getElementById('endDate');
   const categorySelect = document.getElementById('category');
-
+// 🔥 필터 변경 시 즉시 호출
+  startDateInput.addEventListener("change", () => loadRecruits(0));
+  endDateInput.addEventListener("change", () => loadRecruits(0));
+  categorySelect.addEventListener("change", () => loadRecruits(0));
   if (!recruitListDiv || !paginationDiv) {
     console.error('recruitListDiv 또는 paginationDiv를 찾을 수 없습니다.');
     return;
   }
+  window.addEventListener("globalSearch", async (e) => {
+    const keyword = e.detail.keyword;
 
+    const url = `/api/v1/recruit/search?title=${keyword}&content=${keyword}&page=0&size=5`;
+
+    try {
+      const response = await apiFetch(url);
+      const json = await response.json();
+
+      const pageData = json.data;
+
+      renderList(pageData.content || []);
+      renderPagination(pageData.totalPages || 1, 0);
+
+    } catch (err) {
+      console.error(err);
+    }
+  });
   const PAGE_SIZE = 5;
   let currentPage = 0;
 
@@ -19,7 +39,6 @@ window.addEventListener("load", () => {
   async function safeFetchJson(url, opts = {}) {
     const res = await apiFetch(url, opts);
     const json = await res.json();
-
     if (!res.ok) {
       throw new Error(json?.message || "서버 오류");
     }
@@ -53,10 +72,9 @@ window.addEventListener("load", () => {
 
     try {
       const qs = buildQuery(page);
-
       const json = await safeFetchJson(`/api/v1/recruit?${qs}`);
-
       const pageData = json?.data;
+
       if (!pageData) {
         return renderEmpty('조회 불가');
       }
@@ -123,7 +141,6 @@ window.addEventListener("load", () => {
         </div>
       `;
 
-      // 상세페이지 이동
       card.addEventListener('click', () => {
         window.location.href = `/recruit/${r.recruitId}`;
       });
@@ -188,11 +205,41 @@ window.addEventListener("load", () => {
   }
 
   // ==============================
-  // 이벤트 등록
+  // 🔥 특정 관광지 모집글 로드
   // ==============================
-  startDateInput.addEventListener('change', () => loadRecruits(0));
-  endDateInput.addEventListener('change', () => loadRecruits(0));
-  categorySelect.addEventListener('change', () => loadRecruits(0));
+  async function loadRecruitListBySpot(touristSpotId, page = 0) {
+    try {
+      const res = await apiFetch(
+          `/api/v1/recruit/touristSpot/${touristSpotId}?page=${page}&size=5`);
+      const result = await res.json();
+
+      const pageData = result.data;
+      if (!pageData) {
+        renderEmpty("조회 결과가 없습니다.");
+        renderPagination(0);
+        return;
+      }
+
+      const recruits = pageData.content || [];
+      const totalPages = pageData.totalPages ?? 0;
+
+      if (recruits.length === 0) {
+        renderEmpty("이 관광지에는 모집글이 없습니다.");
+      } else {
+        renderList(recruits);
+      }
+
+      renderPagination(totalPages, pageData.number ?? 0);
+
+    } catch (err) {
+      console.error("특정 관광지 모집글 불러오기 실패", err);
+      renderEmpty("데이터 로드 실패");
+      renderPagination(0);
+    }
+  }
+
+  // ⭐ 마커에서 호출할 수 있도록 전역(window)에 내보냄
+  window.loadRecruitListBySpot = loadRecruitListBySpot;
 
   // 첫 로딩
   loadRecruits(0);

@@ -23,6 +23,7 @@ public class RecruitResDto {
     private List<ConditionResDto> conditions;
     private String category;
     private String touristSpotAddress;
+    private String touristSpotTitle;
     private String memberId;
     private String memberName;
     private int memberAge;

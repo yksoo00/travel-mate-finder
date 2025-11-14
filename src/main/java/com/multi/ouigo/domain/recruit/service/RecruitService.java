@@ -20,8 +20,10 @@ import com.multi.ouigo.domain.recruit.mapper.RecruitMapper;
 import com.multi.ouigo.domain.recruit.repository.RecruitRepository;
 import com.multi.ouigo.domain.tourist.entity.TouristSpot;
 import com.multi.ouigo.domain.tourist.repository.TouristSpotRepository;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -214,7 +216,8 @@ public class RecruitService {
         return pageResult.map(recruitMapper::toDto);
     }
 
-    public Page<RecruitListResDto> findAllRecruitBySearch(HttpServletRequest request,
+    public Page<RecruitListResDto> findAllRecruitBySearch(
+        HttpServletRequest request,
         Pageable pageable, String title, String content) {
 
         String memberId = tokenProvider.extractMemberId(request);
@@ -223,15 +226,20 @@ public class RecruitService {
 
         Specification<Recruit> spec = (root, query, cb) -> cb.conjunction();
 
-        if (title != null && !title.isEmpty()) {
-            spec = spec.and((root, query, cb) ->
-                cb.like(root.get("title"), "%" + title + "%")); // 부분 일치 검색 (like)
-        }
+        spec = spec.and((root, query, cb) -> {
+            List<Predicate> orList = new ArrayList<>();
 
-        if (content != null && !content.isEmpty()) {
-            spec = spec.and((root, query, cb) ->
-                cb.like(root.get("content"), "%" + content + "%"));
-        }
+            if (title != null && !title.isEmpty()) {
+                orList.add(cb.like(root.get("title"), "%" + title + "%"));
+            }
+
+            if (content != null && !content.isEmpty()) {
+                orList.add(cb.like(root.get("content"), "%" + content + "%"));
+            }
+
+            // 둘 중 하나라도 true → OR 조건
+            return cb.or(orList.toArray(new Predicate[0]));
+        });
 
         Page<Recruit> pageResult = recruitRepository.findAll(spec, pageable);
 

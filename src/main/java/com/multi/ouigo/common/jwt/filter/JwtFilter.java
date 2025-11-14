@@ -41,10 +41,10 @@ public class JwtFilter extends OncePerRequestFilter {
         "/auth/**",
         "/public/**",
         "/swagger-ui/**",
-        "/recruit/**",
         "/layout/**",
         "/navbar/**",
         "/static/**"
+        
     };
 
 

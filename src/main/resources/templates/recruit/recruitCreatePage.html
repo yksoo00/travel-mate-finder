@@ -1,11 +1,13 @@
 <div th:fragment="recruitContent" class="recruit-detail">
   <h2 class="section-title">모집글 작성</h2>
 
+  <!-- 제목 -->
   <section class="condition-group">
     <strong>제목</strong>
     <input type="text" id="recruitTitle" class="input-box" placeholder="제목을 입력하세요"/>
   </section>
 
+  <!-- 일정 + 주소 -->
   <section class="condition-group">
     <strong>여행 일정 및 관광지</strong>
     <div class="summary-card">
@@ -15,24 +17,26 @@
         <span>~</span>
         <input type="date" id="endDate" class="input-date"/>
       </div>
+
       <div class="summary-row">
         <span class="icon">📍</span>
-        <input
-            type="text"
-            id="touristSpotName"
-            class="input-box"
-            placeholder="관광지를 입력하세요"
-            autocomplete="off"
-        />
+        <input type="text" id="map-address-display" class="input-box"
+               placeholder="지도에서 마커 클릭하면 자동입력" disabled/>
       </div>
     </div>
   </section>
 
+  <!-- 관광지 정보 hidden -->
+  <input type="hidden" id="touristSpotId">
+  <input type="hidden" id="touristSpotName">
+
+  <!-- 내용 -->
   <section class="condition-group">
     <strong>내용</strong>
     <textarea id="recruitContent" class="input-textarea" placeholder="내용을 입력하세요"></textarea>
   </section>
 
+  <!-- 유형 -->
   <section class="condition-group">
     <strong>동행 유형</strong>
     <select id="recruitCategory" class="input-select">
@@ -43,31 +47,32 @@
     </select>
   </section>
 
+  <!-- 성별 조건 -->
   <section class="condition-group">
     <strong>성별 조건</strong>
     <div class="checkbox-group">
-      <label><input type="checkbox" name="genderCodes" value="G100"/> 남자</label>
-      <label><input type="checkbox" name="genderCodes" value="G101"/> 여자</label>
+      <label><input type="checkbox" name="genderCodes" value="G100"> 남자</label>
+      <label><input type="checkbox" name="genderCodes" value="G101"> 여자</label>
     </div>
   </section>
 
+  <!-- 연령 조건 -->
   <section class="condition-group">
     <strong>연령 조건</strong>
     <div class="checkbox-group">
-      <label><input type="checkbox" name="ageCodes" value="C100"/> 10대</label>
-      <label><input type="checkbox" name="ageCodes" value="C101"/> 20대</label>
-      <label><input type="checkbox" name="ageCodes" value="C102"/> 30대</label>
-      <label><input type="checkbox" name="ageCodes" value="C103"/> 40대</label>
-      <label><input type="checkbox" name="ageCodes" value="C104"/> 50대</label>
-      <label><input type="checkbox" name="ageCodes" value="C105"/> 60대</label>
+      <label><input type="checkbox" name="ageCodes" value="C100"> 10대</label>
+      <label><input type="checkbox" name="ageCodes" value="C101"> 20대</label>
+      <label><input type="checkbox" name="ageCodes" value="C102"> 30대</label>
+      <label><input type="checkbox" name="ageCodes" value="C103"> 40대</label>
+      <label><input type="checkbox" name="ageCodes" value="C104"> 50대</label>
+      <label><input type="checkbox" name="ageCodes" value="C105"> 60대</label>
     </div>
   </section>
 
+  <!-- 버튼 -->
   <section class="action-section">
     <div class="action-wrap">
       <button class="btn btn-primary" id="btn-create">등록하기</button>
     </div>
   </section>
-
-  <script th:src="@{/js/recruit-create.js}" defer></script>
 </div>

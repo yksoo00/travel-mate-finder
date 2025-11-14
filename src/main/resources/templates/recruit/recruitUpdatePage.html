@@ -17,16 +17,13 @@
       </div>
       <div class="summary-row">
         <span class="icon">📍</span>
-        <input
-            type="text"
-            id="touristSpotName"
-            class="input-box"
-            placeholder="관광지를 입력하세요"
-            autocomplete="off"
-        />
+        <input type="text" id="map-address-display" class="input-box"
+               placeholder="지도에서 마커 클릭하면 자동입력" disabled/>
       </div>
     </div>
   </section>
+  <input type="hidden" id="touristSpotId">
+  <input type="hidden" id="touristSpotName">
 
   <section class="condition-group">
     <strong>내용</strong>
@@ -69,5 +66,4 @@
     </div>
   </section>
 
-  <script th:src="@{/js/recruit-update.js}" defer></script>
 </div>

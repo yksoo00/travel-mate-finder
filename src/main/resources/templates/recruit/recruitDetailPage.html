@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8"/>
-  <title th:text="${recruit != null} ? ${recruit.recruitTitle} : '모집 상세'">모집 상세</title>
-  <link rel="stylesheet" th:href="@{/css/layout.css}"/>
-  <link rel="stylesheet" th:href="@{/css/recruit-detail.css}"/>
-</head>
-<body>
-
 <div th:fragment="recruitContent" class="recruit-detail">
+
   <!-- ================= 제목 섹션 ================= -->
   <section class="section title-section">
     <h2 class="section-title">제목</h2>
@@ -71,10 +62,10 @@
         <div id="categoryText-client" class="tag" th:if="${recruit == null}"></div>
       </div>
 
-      <!-- ✅ 여행장 정보 -->
+      <!-- 여행장 정보 -->
       <div class="condition-group">
         <strong>여행장</strong>
-        <div id="recruitOwnerInfo" class="tag-list"></div> <!-- ✅ 서버 렌더링 X -->
+        <div id="recruitOwnerInfo" class="tag-list"></div>
       </div>
 
       <!-- 같이 가는 사람 -->
@@ -89,19 +80,18 @@
         </ul>
         <ul id="approvalsList-client" class="tag-list" th:if="${recruit == null}"></ul>
       </div>
+
     </div>
   </section>
 
   <!-- ================= 버튼 영역 ================= -->
   <section class="action-section">
     <div class="action-wrap">
-      <!-- JS에서 조건에 따라 버튼 추가 -->
       <button class="btn btn-primary" id="btn-apply">참여하기</button>
     </div>
   </section>
 
-  <!-- JS 연결 -->
-  <script th:src="@{/js/recruit-detail.js}" defer></script>
+  <!-- JS -->
+
+
 </div>
-</body>
-</html>

@@ -42,6 +42,7 @@ public interface RecruitMapper {
     @Mapping(target = "approvals", source = "approvals", qualifiedByName = "toApprovalDtoList")
     @Mapping(target = "conditions", source = "conditions", qualifiedByName = "toConditionDtoList")
     @Mapping(target = "touristSpotAddress", expression = "java(recruit.getTouristSpot().getAddress())")
+    @Mapping(target = "touristSpotTitle", expression = "java(recruit.getTouristSpot().getTitle())")
     @Mapping(target = "memberAge", expression = "java(recruit.getMember().getAge())")
     @Mapping(target = "memberGender", expression = "java(recruit.getMember().getGender())")
     @Mapping(target = "memberName", expression = "java(recruit.getMember().getNickName())")

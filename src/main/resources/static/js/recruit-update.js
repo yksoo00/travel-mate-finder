@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
     const recruitCategory = document.getElementById('recruitCategory').value;
-    const touristSpotId = 1;
+    const touristSpotId = document.getElementById('touristSpotId').value;
     const touristSpotName = document.getElementById(
         'touristSpotName').value.trim();
 
@@ -62,8 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           recruitCategory,
           touristSpotId,
           genderCodes,
-          ageCodes,
-          touristSpotName
+          ageCodes
         }),
       });
 

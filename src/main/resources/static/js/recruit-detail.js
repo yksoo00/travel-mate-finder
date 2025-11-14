@@ -35,7 +35,60 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     const result = await response.json();
     const data = result.data;
+    // 상세 조회 끝난 뒤 touristSpotAddress 받아온 상태에서
+    const touristSpotAddress = data.touristSpotAddress;
 
+    if (touristSpotAddress && window.map) {
+      const geocoder = new kakao.maps.services.Geocoder();
+
+      window.geocoder.addressSearch(touristSpotAddress,
+          function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+
+              const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+              // 마커 찍기
+              const marker = new kakao.maps.Marker({
+                map: map,
+                position: coords
+              });
+              const overlayDiv = document.createElement("div");
+              overlayDiv.className = "ouigo-overlay";
+              overlayDiv.innerText = data.touristSpotTitle;
+
+              const overlay = new kakao.maps.CustomOverlay({
+                position: coords,
+                content: overlayDiv,
+                yAnchor: 1.7,
+                xAnchor: 0.5
+              });
+
+              // 처음에는 숨김
+              overlay.setMap(null);
+
+              // 🔵 마우스 올리면 표시
+              kakao.maps.event.addListener(marker, "mouseover", () => {
+                overlay.setMap(map);
+                overlayDiv.classList.add("show");
+              });
+
+              // 🔵 마우스 벗어나면 숨김
+              kakao.maps.event.addListener(marker, "mouseout", () => {
+                overlayDiv.classList.remove("show");
+
+                setTimeout(() => {
+                  if (!overlayDiv.classList.contains("show")) {
+                    overlay.setMap(null);
+                  }
+                }, 150);
+              });
+
+              // 지도 중심 이동
+              map.setCenter(coords);
+
+            }
+
+          });
+    }
     // ========== 여행장 정보 ==========
     const ownerInfo = document.getElementById('recruitOwnerInfo');
     if (ownerInfo && data.memberName) {

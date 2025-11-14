@@ -1,23 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
-  // ========================= 관광지 목록 로드 =========================
-  async function loadTouristSpots() {
-    const select = document.getElementById('touristSpotId');
-    try {
-      const res = await apiFetch('/api/v1/touristSpots');
-      const result = await res.json();
-
-      result.data?.forEach(spot => {
-        const option = document.createElement('option');
-        option.value = spot.id;
-        option.textContent = spot.title;
-        select.appendChild(option);
-      });
-    } catch (err) {
-      console.error('관광지 목록 로딩 실패:', err);
-    }
-  }
-
   // ========================= 모집글 등록 =========================
   document.getElementById('btn-create').addEventListener('click', async () => {
     const recruitTitle = document.getElementById('recruitTitle').value.trim();
@@ -26,9 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
     const recruitCategory = document.getElementById('recruitCategory').value;
-    const touristSpotId = 1; // ❗ 지금은 하드코딩 유지 (원래 로직 그대로)
-    const touristSpotName = document.getElementById(
-        'touristSpotName').value.trim();
+    const touristSpotId = document.getElementById('touristSpotId').value;
 
     const genderCodes = [...document.querySelectorAll(
         'input[name="genderCodes"]:checked')]
@@ -55,8 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           recruitCategory,
           touristSpotId,
           genderCodes,
-          ageCodes,
-          touristSpotName
+          ageCodes
         }),
       });
 
@@ -74,6 +53,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // 첫 로딩
-  await loadTouristSpots();
 });

@@ -30,7 +30,7 @@ public class MemService {
     private final MemberRepository memberRepository;
     private final MemRepository memRepository;
     private final MemMapper memMapper;
-    @Value("${profileimg}")
+    @Value("${PROFILE_IMG}")
     private String profileimg;
 
     // 마이페이지 - 전체 정보 조회

@@ -52,6 +52,11 @@
   margin-right: 30px;
 }
 
+.logo-img {
+  height: 40px; /* 원하는 크기 */
+  width: auto;
+}
+
 .logo-text {
   font-size: 28px;
   font-weight: bold;
