@@ -1,477 +1,413 @@
-// /js/touristDetail.js (최종 완성본 - 수정 페이지 이동 반영)
+// =====================================================
+// 🚀 1) 전역 변수 선언 (중복 금지)
+// =====================================================
+let touristId = null;
+let reviewListContainer = null;
+let paginationContainer = null;
 
-// map.js의 전역 변수와 함수 (map, geocoder, moveMap, addMarker, clearMarkers)를 사용한다고 가정합니다.
-const container = document.getElementById('touristDetailContainer');
-const touristId = container?.dataset.touristId;
-
-// 💡 컨테이너 변수 선언
-const reviewListContainer = document.getElementById('review-list');
-const paginationContainer = document.getElementById('pagination-container');
-
-// 💡 기본 프로필 이미지 URL 설정
 const DEFAULT_PROFILE_IMG = '/img/default-avatar.png';
 
+// =====================================================
+// 🚀 2) DOMContentLoaded — touristId 주입 및 초기화
+// =====================================================
+document.addEventListener("DOMContentLoaded", () => {
 
-console.log("tt", touristId);
-document.addEventListener("DOMContentLoaded", function() {
-    // Geocoder 초기화
-    if (typeof kakao !== 'undefined' && typeof kakao.maps.services !== 'undefined' && typeof geocoder === 'undefined') {
-        geocoder = new kakao.maps.services.Geocoder();
-    }
+  const container = document.getElementById('touristDetailContainer');
+  touristId = container?.dataset.touristId ?? null;
+  console.log("console.log(touristId)")
+  console.log(touristId)
+  reviewListContainer = document.getElementById('review-list');
+  paginationContainer = document.getElementById('pagination-container');
 
-    // touristId 변수가 Thymeleaf에 의해 주입되었는지 확인 후 사용
-    if (typeof touristId !== 'undefined' && touristId !== null && touristId !== 0) {
-        fetchDetails(touristId);
-        fetchReviewsAndRender(0); // 리뷰 목록 로딩 시작 (Spring Pageable 0-Index)
-    }
-    setupButtonListeners(); // 모든 버튼 리스너 연결
+  console.log("🔥 touristId:", touristId);
+
+  if (!touristId) {
+    console.error("❌ touristId가 존재하지 않습니다.");
+    return;
+  }
+
+  // 상세 + 리뷰 로드
+  fetchDetails(touristId);
+  fetchReviewsAndRender(0);
+
+  // 버튼 이벤트 연결
+  setupButtonListeners();
 });
 
-
-// 💡 리뷰 목록을 서버로부터 가져와 화면에 렌더링하는 메인 함수
+// =====================================================
+// 🚀 3) 리뷰 목록 가져오기 + 렌더링
+// =====================================================
 async function fetchReviewsAndRender(page = 0) {
-    if (!touristId || !reviewListContainer || !paginationContainer) return;
+  if (!touristId) {
+    return;
+  }
 
-    // 로딩 상태 표시
-    reviewListContainer.innerHTML = `<div style="text-align: center; padding: 20px;">리뷰를 불러오는 중입니다...</div>`;
-    paginationContainer.innerHTML = '';
+  reviewListContainer.innerHTML =
+      `<div style="text-align:center;padding:20px;">리뷰를 불러오는 중입니다...</div>`;
+  paginationContainer.innerHTML = '';
 
-    try {
-        const url = `/api/v1/reviews/${touristId}?page=${page}&size=5`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status} (리뷰 호출 실패)`);
-        }
-
-        const data = await response.json();
-        const reviews = data.data.content || [];
-        const pagination = {
-            currentPage: data.data.number + 1,
-            totalPages: data.data.totalPages
-        };
-
-        renderReviews(reviews, reviewListContainer);
-        renderPagination(pagination, paginationContainer);
-
-    } catch (error) {
-        console.error('Error fetching reviews:', error);
-        reviewListContainer.innerHTML = `<div style="text-align: center; padding: 20px; color: red;">리뷰를 불러오는 데 실패했습니다.</div>`;
+  try {
+    const response = await apiFetch(
+        `/api/v1/reviews/${touristId}?page=${page}&size=5`);
+    console.log("🔎 리뷰 요청 URL:",
+        `/api/v1/reviews/${touristId}?page=${page}&size=5`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Status:", response.status);
+      console.error("Response:", errorText);
     }
+
+    const data = await response.json();
+    const reviews = data.data?.content || [];
+
+    renderReviews(reviews);
+    renderPagination({
+      currentPage: data.data.number + 1,
+      totalPages: data.data.totalPages
+    });
+
+  } catch (error) {
+    console.error(error);
+    reviewListContainer.innerHTML =
+        `<div style="color:red;text-align:center;padding:20px;">리뷰 불러오기 실패</div>`;
+  }
 }
 
-// 💡 리뷰 목록 HTML을 생성하여 렌더링하는 함수 (수정 폼 포함)
-function renderReviews(reviews, container) {
-    container.innerHTML = '';
+// =====================================================
+// 🚀 4) 리뷰 렌더링
+// =====================================================
+function renderReviews(reviews) {
+  reviewListContainer.innerHTML = '';
 
-    if (reviews.length === 0) {
-        container.innerHTML = `<div style="text-align: center; padding: 20px; color: #777;">아직 작성된 리뷰가 없습니다.</div>`;
-        return;
-    }
+  if (reviews.length === 0) {
+    reviewListContainer.innerHTML =
+        `<div style="text-align:center;padding:20px;color:#777;">아직 리뷰가 없습니다.</div>`;
+    return;
+  }
 
-    const DEFAULT_PROFILE_IMG = '/img/default-avatar.png';
+  reviews.forEach(review => {
 
-    reviews.forEach(review => {
-        let displayDate = '날짜 미상';
-        let modifiedBadge = ''; // 수정됨 표시
+    const isModified = review.updatedAt && review.updatedAt
+        !== review.createdAt;
+    const dateSource = isModified ? review.updatedAt : review.createdAt;
+    const dateObj = new Date(dateSource);
 
-        // 💡 [수정됨] isModified 조건: updatedAt이 존재하고 && createdAt과 값이 다를 때만 '수정됨'으로 간주
-        const isModified = !!review.updatedAt && (review.updatedAt !== review.createdAt);
+    const formatted = `${dateObj.getFullYear()}-${String(
+        dateObj.getMonth() + 1).padStart(2, '0')}-${String(
+        dateObj.getDate()).padStart(2, '0')}
+                       ${String(dateObj.getHours()).padStart(2, '0')}:${String(
+        dateObj.getMinutes()).padStart(2, '0')}`;
 
-        // 💡 표시할 날짜 선택: 수정된 경우 updatedAt, 아니면 createdAt 사용
-        const dateSource = isModified ? review.updatedAt : review.createdAt;
+    const modifiedBadge = isModified
+        ? ' <span class="review-modified-badge">(수정됨)</span>' : '';
 
+    const profileImg = review.profileImgUrl || DEFAULT_PROFILE_IMG;
 
-        if (dateSource) {
-            const d = new Date(dateSource);
-
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-
-            const hour = String(d.getHours()).padStart(2, '0');
-            const minute = String(d.getMinutes()).padStart(2, '0');
-
-            // 날짜 형식: YYYY-MM-DD HH:mm
-            displayDate = `${year}-${month}-${day} ${hour}:${minute}`;
-
-            // 💡 [수정됨] isModified가 true일 때만 뱃지 추가
-            if (isModified) {
-                modifiedBadge = ' <span class="review-modified-badge">(수정됨)</span>';
-            }
-        }
-
-        // 💡 프로필 이미지 URL 결정
-        const profileImg = review.profileImgUrl || DEFAULT_PROFILE_IMG;
-
-        const reviewHtml = `
-            <div class="review-item" data-review-id="${review.id}">
-                <div class="review-meta-row">
-                    <div class="review-meta"> 
-                        <img class="review-profile-img" src="${profileImg}" alt="${review.nickNm} 프로필"/>
-                        <div class="review-text-meta">
-                            <p class="review-profile">${review.nickNm || '익명 사용자'}</p>
-                            <p class="review-date">${displayDate}${modifiedBadge}</p>
-                        </div>
-                    </div>
-                    <div class="review-actions">
-                        <button class="btn-review-edit" onclick="handleReviewEdit(${review.id})">수정</button>
-                        <button class="btn-review-delete" onclick="handleReviewDelete(${review.id})">삭제</button>
-                    </div>
-                </div>
-                <p class="review-content-display">${review.content || '내용 없음'}</p> 
-
-                <div class="review-edit-form" style="display: none;">
-                    <textarea class="review-edit-textarea">${review.content || ''}</textarea>
-                    <div class="edit-actions">
-                        <button class="btn-review-save submit-btn" onclick="handleReviewSave(${review.id})">저장</button>
-                        <button class="btn-review-cancel submit-btn" onclick="handleReviewCancel(${review.id})">취소</button>
-                    </div>
-                </div>
+    const html = `
+      <div class="review-item" data-review-id="${review.id}">
+        <div class="review-meta-row">
+          <div class="review-meta">
+            <img class="review-profile-img" src="${profileImg}">
+            <div class="review-text-meta">
+              <p class="review-profile">${review.nickNm || '익명'}</p>
+              <p class="review-date">${formatted}${modifiedBadge}</p>
             </div>
-        `;
-        container.insertAdjacentHTML('beforeend', reviewHtml);
+          </div>
+          <div class="review-actions">
+            <button class="btn-review-edit" onclick="handleReviewEdit(${review.id})">수정</button>
+            <button class="btn-review-delete" onclick="handleReviewDelete(${review.id})">삭제</button>
+          </div>
+        </div>
+
+        <p class="review-content-display">${review.content}</p>
+
+        <div class="review-edit-form" style="display:none;">
+          <textarea class="review-edit-textarea">${review.content}</textarea>
+          <div class="edit-actions">
+            <button class="btn-review-save" onclick="handleReviewSave(${review.id})">저장</button>
+            <button class="btn-review-cancel" onclick="handleReviewCancel(${review.id})">취소</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    reviewListContainer.insertAdjacentHTML("beforeend", html);
+  });
+}
+
+// =====================================================
+// 🚀 5) 리뷰 페이지네이션
+// =====================================================
+function renderPagination(totalPages, current) {
+  paginationContainer.innerHTML = '';
+  if (totalPages <= 1) {
+    return;
+  }
+
+  const createBtn = (label, pageIndex, disabled = false, active = false) => {
+    const btn = document.createElement('button');
+    btn.className = 'page-btn';
+    btn.textContent = label;
+
+    if (disabled) {
+      btn.classList.add('disabled');
+    }
+    if (active) {
+      btn.classList.add('active');
+    }
+    btn.disabled = disabled;
+
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      if (!btn.disabled) {
+        loadRecruits(pageIndex);
+      }
     });
+
+    return btn;
+  };
+
+  paginationContainer.appendChild(createBtn('«', 0, current === 0));
+  paginationContainer.appendChild(
+      createBtn('‹', Math.max(0, current - 1), current === 0));
+
+  const maxButtons = 7;
+  let start = Math.max(0, current - Math.floor(maxButtons / 2));
+  let end = Math.min(totalPages - 1, start + maxButtons - 1);
+
+  if (end - start < maxButtons - 1) {
+    start = Math.max(0, end - (maxButtons - 1));
+  }
+
+  for (let i = start; i <= end; i++) {
+    paginationContainer.appendChild(createBtn(i + 1, i, false, i === current));
+  }
+
+  paginationContainer.appendChild(
+      createBtn('›', Math.min(totalPages - 1, current + 1),
+          current === totalPages - 1));
+  paginationContainer.appendChild(
+      createBtn('»', totalPages - 1, current === totalPages - 1));
 }
 
-// 💡 페이지네이션 관련 함수들 (기존 로직 유지)
-
-function renderPagination(pagination, container) {
-    container.innerHTML = '';
-    const { currentPage, totalPages } = pagination;
-
-    const prevHtml = `<span class="page-link" data-action="prev" data-current-page="${currentPage}" data-total-pages="${totalPages}" ${currentPage <= 1 ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>< 이전</span>`;
-    container.insertAdjacentHTML('beforeend', prevHtml);
-
-    for (let i = 1; i <= totalPages; i++) {
-        const activeClass = i === currentPage ? ' active' : '';
-        const pageLinkHtml = `<span class="page-link${activeClass}" data-page="${i}">${i}</span>`;
-        container.insertAdjacentHTML('beforeend', pageLinkHtml);
-    }
-
-    const nextHtml = `<span class="page-link" data-action="next" data-current-page="${currentPage}" data-total-pages="${totalPages}" ${currentPage >= totalPages ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>다음 ></span>`;
-    container.insertAdjacentHTML('beforeend', nextHtml);
-
-    setupPaginationListeners();
+// =====================================================
+// 🚀 6) 리뷰 수정 / 취소 / 저장 / 삭제
+// =====================================================
+function handleReviewEdit(id) {
+  const item = document.querySelector(`.review-item[data-review-id="${id}"]`);
+  item.querySelector('.review-content-display').style.display = 'none';
+  item.querySelector('.review-actions').style.display = 'none';
+  item.querySelector('.review-edit-form').style.display = 'flex';
 }
 
-function handlePageClick(event) {
-    const pageLink = event.target;
-    const pageNumber = pageLink.dataset.page;
-    const action = pageLink.dataset.action;
-
-    if (pageNumber) {
-        fetchReviewsAndRender(parseInt(pageNumber) - 1);
-    } else if (action === 'prev') {
-        const currentPage = parseInt(pageLink.dataset.currentPage);
-        const prevPage = currentPage - 1;
-        if (prevPage >= 1) {
-            fetchReviewsAndRender(prevPage - 1);
-        }
-    } else if (action === 'next') {
-        const currentPage = parseInt(pageLink.dataset.currentPage);
-        const totalPages = parseInt(pageLink.dataset.totalPages);
-        const nextPage = currentPage + 1;
-        if (nextPage <= totalPages) {
-            fetchReviewsAndRender(nextPage - 1);
-        }
-    }
+function handleReviewCancel(id) {
+  const item = document.querySelector(`.review-item[data-review-id="${id}"]`);
+  item.querySelector('.review-edit-form').style.display = 'none';
+  item.querySelector('.review-content-display').style.display = 'block';
+  item.querySelector('.review-actions').style.display = 'flex';
 }
 
-function setupPaginationListeners() {
-    document.querySelectorAll('#pagination-container .page-link').forEach(link => {
-        link.removeEventListener('click', handlePageClick);
-        link.addEventListener('click', handlePageClick);
-    });
+async function handleReviewSave(id) {
+  const item = document.querySelector(`.review-item[data-review-id="${id}"]`);
+  const newContent = item.querySelector('.review-edit-textarea').value;
+
+  if (!newContent.trim()) {
+    alert("내용을 입력해주세요.");
+    return;
+  }
+
+  const res = await apiFetch(`/api/v1/reviews/${id}`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({content: newContent})
+  });
+
+  if (res.ok) {
+    alert("수정 완료");
+    fetchReviewsAndRender(0);
+  } else {
+    alert("수정 실패");
+  }
 }
 
+async function handleReviewDelete(id) {
+  if (!confirm("리뷰를 삭제하시겠습니까?")) {
+    return;
+  }
 
-// ==============================================================================
-// 💡 관광지 수정/삭제 구현 (수정: 페이지 이동, 삭제: API 호출)
-// ==============================================================================
+  const res = await apiFetch(`/api/v1/reviews/${id}`, {method: 'DELETE'});
 
-// 💡 [수정됨] 관광지 수정 처리 함수: 수정 페이지로 이동
-function handleSpotEdit(spotId) {
-    if (!confirm(`[관광지 ID: ${spotId}] 이 관광지 정보를 수정하시겠습니까? 수정 페이지로 이동합니다.`)) {
-        return;
-    }
-
-    // 💡 별도의 수정 페이지 URL로 이동 (백엔드에서 해당 경로 처리 필요)
-    window.location.href = `/tourist-spots/${spotId}/edit`;
+  if (res.ok) {
+    alert("삭제 완료");
+    fetchReviewsAndRender(0);
+  } else {
+    alert("삭제 실패");
+  }
 }
 
-// 💡 관광지 삭제 처리 함수 (API 호출 유지)
-async function handleSpotDelete(spotId) {
-    if (!confirm(`[관광지 ID: ${spotId}] 관광지를 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
-        return;
-    }
-
-    try {
-        const url = `/api/v1/tourist-spots/${spotId}`;
-        const response = await fetch(url, {
-            method: 'DELETE',
-            headers: {
-                // 인증 토큰 없음
-            }
-        });
-
-        if (response.ok) {
-            alert('관광지가 성공적으로 삭제되었습니다. 목록 페이지로 이동합니다.');
-            window.location.href = '/tourist-spots'; // 목록 페이지로 리다이렉션 (경로 확인 필요)
-        } else {
-            const data = await response.json();
-            alert(`관광지 삭제 실패: ${data.message || '서버 오류'} (권한 오류 확인 필요)`);
-        }
-
-    } catch (error) {
-        console.error('Error deleting spot:', error);
-        alert('관광지 삭제 중 네트워크 오류가 발생했습니다.');
-    }
-}
-
-
-// ==============================================================================
-// 💡 리뷰 수정/삭제 구현 (토큰 제거 상태 유지)
-// ==============================================================================
-
-function handleReviewEdit(reviewId) {
-    const reviewItem = document.querySelector(`.review-item[data-review-id="${reviewId}"]`);
-    if (!reviewItem) return;
-
-    reviewItem.querySelector('.review-content-display').style.display = 'none';
-    reviewItem.querySelector('.review-actions').style.display = 'none';
-    reviewItem.querySelector('.review-edit-form').style.display = 'flex';
-}
-
-function handleReviewCancel(reviewId) {
-    const reviewItem = document.querySelector(`.review-item[data-review-id="${reviewId}"]`);
-    if (!reviewItem) return;
-
-    reviewItem.querySelector('.review-edit-form').style.display = 'none';
-    reviewItem.querySelector('.review-content-display').style.display = 'block';
-    reviewItem.querySelector('.review-actions').style.display = 'flex';
-
-    const originalContent = reviewItem.querySelector('.review-content-display').textContent;
-    reviewItem.querySelector('.review-edit-textarea').value = originalContent;
-}
-
-// 💡 저장 버튼 클릭 시 서버로 수정 요청
-async function handleReviewSave(reviewId) {
-    const reviewItem = document.querySelector(`.review-item[data-review-id="${reviewId}"]`);
-    if (!reviewItem) return;
-
-    const newContent = reviewItem.querySelector('.review-edit-textarea').value;
-
-    if (!newContent.trim()) {
-        alert('수정할 리뷰 내용을 입력해주세요.');
-        return;
-    }
-
-    try {
-        const url = `/api/v1/reviews/${reviewId}`;
-        const response = await fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                content: newContent
-            })
-        });
-
-        if (response.ok) {
-            alert('리뷰가 성공적으로 수정되었습니다.');
-            fetchReviewsAndRender(0);
-        } else {
-            const data = await response.json();
-            alert(`리뷰 수정 실패: ${data.message || '서버 오류'} (권한 오류 확인 필요)`);
-            handleReviewCancel(reviewId);
-        }
-
-    } catch (error) {
-        console.error('Error saving review:', error);
-        alert('리뷰 수정 중 네트워크 오류가 발생했습니다.');
-        handleReviewCancel(reviewId);
-    }
-}
-
-// 💡 삭제 버튼 클릭 시 서버로 삭제 요청
-async function handleReviewDelete(reviewId) {
-    if (!confirm(`[리뷰 ID: ${reviewId}] 이 리뷰를 정말 삭제하시겠습니까?`)) {
-        return;
-    }
-
-    try {
-        const url = `/api/v1/reviews/${reviewId}`;
-        const response = await fetch(url, {
-            method: 'DELETE',
-            headers: {}
-        });
-
-        if (response.ok) {
-            alert('리뷰가 성공적으로 삭제되었습니다.');
-            fetchReviewsAndRender(0);
-        } else {
-            const data = await response.json();
-            alert(`리뷰 삭제 실패: ${data.message || '서버 오류'} (권한 오류 확인 필요)`);
-        }
-
-    } catch (error) {
-        console.error('Error deleting review:', error);
-        alert('리뷰 삭제 중 네트워크 오류가 발생했습니다.');
-    }
-}
-
-
-// ==============================================================================
-// 💡 관광지 상세 정보 및 이미지 로드 함수 (기존과 동일)
-// ==============================================================================
+// =====================================================
+// 🚀 7) 관광지 상세 + 이미지 로드
+// =====================================================
 async function fetchDetails(id) {
-    try {
-        const response = await fetch(`/api/v1/tourist-spots/${id}`);
+  try {
+    const res = await fetch(`/api/v1/tourist-spots/${id}`);
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status} (API 호출 실패)`);
-        }
-
-        const data = await response.json();
-        const spot = data.data;
-
-        if (spot) {
-            // 1. 정보 표시
-            document.getElementById('spot-title').textContent = spot.title || '정보 없음';
-            document.getElementById('spot-address').textContent = spot.address || '정보 없음';
-            document.getElementById('spot-phone').textContent = spot.phone || '정보 없음';
-            document.getElementById('spot-description').textContent = spot.description || '정보 없음';
-
-            // 2. 이미지 가져오기 및 메인 이미지 설정
-            let searchKeyword = spot.title;
-            if (searchKeyword.includes("해양광장")) {
-                searchKeyword = searchKeyword.replace("해양광장", "").trim();
-            } else if (searchKeyword.includes("광장")) {
-                searchKeyword = searchKeyword.replace("광장", "").trim();
-            }
-
-            const firstImageUrl = await fetchImages(searchKeyword);
-
-            if (firstImageUrl) {
-                const sliderContainer = document.querySelector('.image-slider-container');
-                sliderContainer.innerHTML = `<img src="${firstImageUrl}" alt="${spot.title} Main Image" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
-            } else {
-                document.getElementById('main-image-placeholder').textContent = "이미지 없음";
-            }
-
-            // 3. 카카오맵 위치 설정 (기존 로직 유지)
-            if (spot.address && typeof geocoder !== 'undefined' && typeof moveMap === 'function') {
-                geocoder.addressSearch(spot.address, function(result, status) {
-                    if (status === kakao.maps.services.Status.OK) {
-                        const lat = result[0].y;
-                        const lng = result[0].x;
-                        if (typeof clearMarkers === 'function') clearMarkers();
-                        if (typeof moveMap === 'function') moveMap(lat, lng, 3);
-                        if (typeof addMarker === 'function') addMarker(lat, lng, spot.title);
-                    }
-                });
-            }
-        } else {
-            document.getElementById('spot-title').textContent = "관광지 정보를 찾을 수 없습니다. (데이터 필드 없음)";
-            document.getElementById('image-loading-status').textContent = "관광지 정보를 찾을 수 없습니다.";
-        }
-    } catch (error) {
-        console.error('Error fetching details:', error);
-        document.getElementById('spot-title').textContent = `오류가 발생했습니다: ${error.message}`;
-        document.getElementById('image-loading-status').textContent = "오류가 발생했습니다.";
+    if (!res.ok) {
+      throw new Error("상세정보 호출 실패");
     }
+
+    const {data: spot} = await res.json();
+
+    document.getElementById('spot-title').textContent = spot.title;
+    document.getElementById('spot-address').textContent = spot.address;
+    document.getElementById('spot-phone').textContent = spot.phone;
+    document.getElementById('spot-description').textContent = spot.description;
+
+    // 이미지 검색 키워드 정제
+    let keyword = spot.title.replace(/해양광장|광장/g, '').trim();
+
+    const mainImage = await fetchImages(keyword);
+
+    if (mainImage) {
+      document.querySelector('.image-slider-container').innerHTML =
+          `<img src="${mainImage}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`;
+    }
+
+    // 지도 이동
+    if (typeof geocoder !== 'undefined' && spot.address) {
+      geocoder.addressSearch(spot.address, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          const lat = result[0].y;
+          const lng = result[0].x;
+
+          clearMarkers();
+          moveMap(lat, lng, 3);
+          addMarker(lat, lng, spot.title);
+        }
+      });
+    }
+
+  } catch (e) {
+    console.error(e);
+  }
 }
 
-
+// =====================================================
+// 🚀 8) 관광지 이미지 API
+// =====================================================
 async function fetchImages(keyword) {
-    const galleryContainer = document.querySelector('.gallery-images');
-    const statusText = document.getElementById('image-loading-status');
-    galleryContainer.innerHTML = '';
-    statusText.textContent = '...이미지 로딩 중';
+  const gallery = document.querySelector('.gallery-images');
+  const status = document.getElementById('image-loading-status');
 
-    const url = `/api/v1/tourist-spots/images?keyword=${encodeURIComponent(keyword)}`;
+  gallery.innerHTML = '';
+  status.textContent = '이미지 로딩 중...';
 
-    try {
-        const response = await fetch(url);
+  try {
+    const res = await fetch(
+        `/api/v1/tourist-spots/images?keyword=${encodeURIComponent(keyword)}`);
 
-        if (!response.ok) {
-            throw new Error(`이미지 API 호출 실패: HTTP Status ${response.status}`);
+    if (!res.ok) {
+      throw new Error("이미지 API 실패");
+    }
+
+    const data = await res.json();
+
+    let items = data.response?.body?.items?.item || [];
+
+    if (!Array.isArray(items)) {
+      items = [items];
+    }
+
+    if (items.length === 0) {
+      status.textContent = "이미지 없음";
+      return null;
+    }
+
+    status.style.display = 'none';
+
+    items.slice(0, 5).forEach(imgItem => {
+      const img = document.createElement('img');
+      img.src = imgItem.galWebImageUrl;
+      img.alt = imgItem.galTitle;
+      img.referrerPolicy = "no-referrer";
+      gallery.appendChild(img);
+    });
+
+    return items[0].galWebImageUrl;
+
+  } catch (e) {
+    console.error(e);
+    status.textContent = "이미지 로딩 실패";
+    return null;
+  }
+}
+
+// =====================================================
+// 🚀 9) 수정 / 삭제 버튼 리스너 연결
+// =====================================================
+function setupButtonListeners() {
+  document.querySelector('.btn-spot-edit')?.addEventListener('click', () => {
+    window.location.href = `/tourist/touristUpdatePage?id=${touristId}`;
+  });
+
+  document.querySelector('.btn-spot-delete')?.addEventListener('click',
+      async () => {
+        if (!confirm("정말 삭제하시겠습니까?")) {
+          return;
         }
+
+        const res = await apiFetch(`/api/v1/tourist-spots/${touristId}`, {
+          method: 'DELETE'
+        });
+
+        if (res.ok) {
+          alert("삭제 완료");
+          window.location.href = "/tourist/touristListPage";
+        } else {
+          alert("삭제 실패");
+        }
+      });
+}
+
+// ===============================
+// 🔵 리뷰 작성 이벤트 등록
+// ===============================
+document.getElementById('submit-review-btn')?.addEventListener('click',
+    async function () {
+      const content = document.getElementById('review-content').value.trim();
+
+      if (!content) {
+        alert("리뷰 내용을 입력해주세요.");
+        return;
+      }
+
+      try {
+        const memberNo = 1; // 🔥 실제 로그인 사용자 번호로 교체해야 함
+        const url = `/api/v1/reviews/${touristId}`;
+
+        // 🔥 apiFetch 사용 (토큰 자동 포함됨)
+        const response = await apiFetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({content})
+        });
 
         const data = await response.json();
-        let items = data.response?.body?.items?.item;
 
-        if (items && !Array.isArray(items)) {
-            items = [items];
+        if (!response.ok) {
+          throw new Error(data.message || "리뷰 작성 실패");
         }
 
-        if (items && items.length > 0) {
-            statusText.style.display = 'none';
-            items.slice(0, 5).forEach(item => {
-                const imageUrl = item.galWebImageUrl;
-                if (imageUrl) {
-                    const img = document.createElement('img');
-                    img.src = imageUrl;
-                    img.alt = item.galTitle;
-                    img.referrerPolicy = "no-referrer";
-                    galleryContainer.appendChild(img);
-                }
-            });
-            return items[0].galWebImageUrl;
-        } else {
-            statusText.textContent = `관련 이미지를 찾을 수 없습니다. (검색어: ${keyword})`;
-            return null;
-        }
-    } catch (error) {
-        console.error('Error fetching images details:', error);
-        statusText.textContent = `이미지 로딩 중 오류가 발생했습니다. 자세한 오류: ${error.message}`;
-        return null;
-    }
-}
+        alert("리뷰가 성공적으로 작성되었습니다.");
+        document.getElementById('review-content').value = "";
 
-function setupButtonListeners() {
-    // 💡 관광지 수정/삭제 버튼 리스너 연결 (touristId를 인자로 넘김)
-    document.querySelector('.btn-spot-edit')?.addEventListener('click', () => handleSpotEdit(touristId));
-    document.querySelector('.btn-spot-delete')?.addEventListener('click', () => handleSpotDelete(touristId));
+        // 리뷰 다시 불러오기
+        fetchReviewsAndRender(0);
 
-    // 💡 리뷰 작성 로직 구현
-    document.getElementById('submit-review-btn')?.addEventListener('click', async function() {
-        const content = document.getElementById('review-content').value;
-
-        if (content.trim()) {
-            try {
-                const memberNo = 1;
-                const url = `/api/v1/reviews/${touristId}?memberNo=${memberNo}`;
-
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        content: content
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok && (data.status === 'OK' || data.status === 'CREATED')) {
-                    alert('리뷰가 성공적으로 작성되었습니다.');
-                    document.getElementById('review-content').value = '';
-                    fetchReviewsAndRender(0);
-                } else {
-                    alert(`리뷰 작성 실패: ${data.message || '서버 오류'}`);
-                }
-
-            } catch (error) {
-                console.error('Error submitting review:', error);
-                alert('리뷰 작성 중 네트워크 오류가 발생했습니다.');
-            }
-
-        } else {
-            alert('리뷰 내용을 입력해주세요.');
-        }
+      } catch (err) {
+        console.error("리뷰 작성 오류:", err);
+        alert(`리뷰 작성 실패: ${err.message}`);
+      }
     });
-}

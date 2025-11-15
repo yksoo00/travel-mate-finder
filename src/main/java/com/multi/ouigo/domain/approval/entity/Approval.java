@@ -1,6 +1,6 @@
 package com.multi.ouigo.domain.approval.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.multi.ouigo.common.entitiy.BaseEntity;
 import com.multi.ouigo.domain.approval.constant.ApprovalStatus;
 import com.multi.ouigo.domain.member.entity.Member;
 import com.multi.ouigo.domain.recruit.entity.Recruit;
@@ -16,13 +16,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -32,7 +31,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class Approval {
+@Where(clause = "del_yn = 0")
+public class Approval extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,10 +52,6 @@ public class Approval {
     @Column(name = "apl_sts")
     private ApprovalStatus status;
 
-    @CreatedDate
-    @Column(name = "crt_dt", updatable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate createdAt;
 
     @PrePersist
     public void prePersist() {

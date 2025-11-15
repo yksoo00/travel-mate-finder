@@ -12,9 +12,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ApprovalMyRecruitResDto {
 
+    private Long approvalId;
+    private Long recruitId;
     private String memberNickName;
     private ApprovalStatus status;
-    private int travelCountry;
-    private Long recruitId;
+    private String touristSpot;
+    private Long memberNo;
 
 }

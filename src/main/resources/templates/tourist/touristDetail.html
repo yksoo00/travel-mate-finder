@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-</head>
-<body>
-
-<div th:fragment="touristContent">
+<div th:fragment="recruitContent">
     <div class="tourist-detail-wrapper">
         <div id="touristDetailContainer" th:attr="data-tourist-id=${touristSpotId}"></div>
 
@@ -61,8 +54,8 @@
                             <p class="review-date">2023-11-12</p>
                         </div>
                         <div class="review-actions">
-                            <button class="btn-review-edit" onclick="handleReviewEdit(999)">수정</button>
-                            <button class="btn-review-delete" onclick="handleReviewDelete(999)">삭제</button>
+                            <button class="btn-review-edit" onclick="handleReviewEdit()">수정</button>
+                            <button class="btn-review-delete" onclick="handleReviewDelete()">삭제</button>
                         </div>
                     </div>
                     <p class="review-content-display">이곳은 리뷰 리스트가 동적으로 채워질 공간입니다. 이 샘플 리뷰는 삭제되거나 대체됩니다.</p>
@@ -83,6 +76,3 @@
     /*]]>*/
 </script>
 
-<script th:src="@{/js/touristDetail.js}"></script>
-</body>
-</html>

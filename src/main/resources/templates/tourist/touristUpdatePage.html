@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관광지 수정</title>
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/recruit.css}">
+  <link rel="stylesheet" th:href="@{/css/tourist.css}">
+  <link rel="stylesheet" th:href="@{/css/touristCreateForm.css}">
+
+  <script type="text/javascript"
+          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8b23243ecce1d67f7d49784724586afa&libraries=services"></script>
+
+  <script th:inline="javascript">
+    const touristId = /*[[${touristId}]]*/ 0;
+  </script>
+</head>
+<body>
+
+<nav class="navbar" th:replace="~{navbar :: navbar}"></nav>
+
+<div class="main-layout">
+  <div class="map-container">
+    <div class="recruit-page" id="map-page">
+      <div class="recruit-header">
+        <h1 class="recruit-title">카카오 맵</h1>
+      </div>
+      <div id="map-content">
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-container">
+    <div class="recruit-page" id="create-page">
+
+      <div class="form-page-header">
+        <h1 class="form-page-title">관광지 수정</h1></div>
+
+      <form id="tourist-update-form"
+            action="/api/v1/tourist-spots"
+            method="post">
+
+        <div class="form-group">
+          <label for="district" class="form-label">지역</label>
+          <input type="text" id="district" name="district" class="form-control"
+                 placeholder="예: 수도권" required>
+        </div>
+
+        <div class="form-group">
+          <label for="title" class="form-label">관광지명</label>
+          <input type="text" id="title" name="title" class="form-control"
+                 placeholder="예: 경복궁" required>
+        </div>
+
+        <div class="form-group">
+          <label for="description" class="form-label">설명</label>
+          <textarea id="description" name="description" class="form-control" rows="5"
+                    placeholder="이 관광지에 대한 간단한 설명을 적어주세요."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="map-address-display" class="form-label">주소 (지도 클릭)</label>
+          <input type="text" class="form-control" id="map-address-display"
+                 placeholder="지도에서 위치를 다시 지정해주세요." disabled>
+        </div>
+        <input type="hidden" id="address" name="address" value="주소 임시값">
+
+        <div class="form-group">
+          <label for="phone" class="form-label">전화번호 (선택)</label>
+          <input type="text" id="phone" name="phone" class="form-control"
+                 placeholder="예: 02-123-4567">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">Update</button>
+          <a th:href="@{/tourist/touristDetail/{id}(id=${touristId})}" class="btn-cancel">Cancel</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/map.js}"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (touristId && touristId !== 0) {
+      apiFetch(`/api/v1/tourist-spots/${touristId}`)
+      .then(response => response.json())
+      .then(data => {
+        const spot = data.data;
+        if (spot) {
+          document.getElementById('district').value = spot.district || '';
+          document.getElementById('title').value = spot.title || '';
+          document.getElementById('description').textContent = spot.description || '';
+          document.getElementById('address').value = spot.address || '';
+          document.getElementById('map-address-display').value = spot.address
+              || '지도에서 위치를 다시 지정해주세요.';
+          document.getElementById('phone').value = spot.phone || '';
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching tourist spot data:', error);
+        alert('정보를 불러오는 데 실패했습니다.');
+      });
+    }
+  });
+</script>
+<script>
+  document.getElementById('tourist-update-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const actionUrl = `/api/v1/tourist-spots/${touristId}`;
+
+    apiFetch(actionUrl, {
+      method: 'PUT',
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error('서버 응답이 올바르지 않습니다.');
+    })
+    .then(data => {
+      alert(data.message);
+
+      window.location.href = `/tourist/touristDetail/${touristId}`;
+    })
+    .catch(error => {
+      console.error('Error submitting form:', error);
+      alert('수정 중 오류가 발생했습니다: ' + error.message);
+    });
+  });
+</script>
+
+<script th:src="@{/js/mapClickToAddress.js}"></script>
+
+</body>
+</html>

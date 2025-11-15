@@ -32,9 +32,9 @@ public class TokenProvider {
 
 
     private static final String AUTHORITIES_KEY = "auth";  // 클레임에서 권한정보담을키
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 3;     //3분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 10;     //3분
     private static final long REFRESH_TOKEN_EXPIRE_TIME =
-        1000L * 60 * 5; //1000L * 60 * 60 * 24 * 1;  // 1일
+        1000L * 60 * 60 * 24 * 30; //1000L * 60 * 60 * 24 * 1;  // 1일
 
     private final JwtProvider jwtProvider;  // JwtProvider 의존성 추가
     private final Key SKEY;
@@ -82,7 +82,7 @@ public class TokenProvider {
                 Duration.ofMillis(REFRESH_TOKEN_EXPIRE_TIME)
             );
             log.info("[TokenProvider] Redis에 리프레시 토큰 저장 완료: memberId={}, TTL={}분",
-                memberId, REFRESH_TOKEN_EXPIRE_TIME / 60000);
+                memberId, REFRESH_TOKEN_EXPIRE_TIME);
         }
 
         return token;

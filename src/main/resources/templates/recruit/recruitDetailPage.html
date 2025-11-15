@@ -1,0 +1,97 @@
+<div th:fragment="recruitContent" class="recruit-detail">
+
+  <!-- ================= 제목 섹션 ================= -->
+  <section class="section title-section">
+    <h2 class="section-title">제목</h2>
+    <div class="title-box">
+      <h1 id="recruitTitle-server" th:if="${recruit != null}"
+          th:text="${recruit.recruitTitle}"></h1>
+      <h1 id="recruitTitle-client" th:if="${recruit == null}">로딩 중...</h1>
+
+      <!-- recruitId 전달 (JS에서 사용) -->
+      <div id="recruitDetailContainer" th:attr="data-recruit-id=${recruitId}"></div>
+    </div>
+  </section>
+
+  <!-- ================= 요약 카드(기간, 위치) ================= -->
+  <section class="summary-section">
+    <div class="summary-card">
+      <div class="summary-row">
+        <span class="icon">📅</span>
+        <span id="recruitPeriod-server" th:if="${recruit != null}"
+              th:text="${#temporals.format(recruit.startDate, 'yyyy-MM-dd')} + ' - ' + ${#temporals.format(recruit.endDate, 'yyyy-MM-dd')}"></span>
+        <span id="recruitPeriod-client" th:if="${recruit == null}"></span>
+      </div>
+      <div class="summary-row">
+        <span class="icon">📍</span>
+        <span id="touristSpotAddress-server" th:if="${recruit != null}"
+              th:text="${recruit.touristSpotAddress}"></span>
+        <span id="touristSpotAddress-client" th:if="${recruit == null}"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 본문 ================= -->
+  <section class="content-section">
+    <h3 class="section-title">내용</h3>
+    <div class="content-box">
+      <div id="recruitContent-server" th:if="${recruit != null}"
+           th:utext="${recruit.recruitContent}"></div>
+      <div id="recruitContent-client" th:if="${recruit == null}"></div>
+    </div>
+  </section>
+
+  <!-- ================= 조건 / 유형 / 승인자 ================= -->
+  <section class="conditions-section">
+    <div class="conditions-left">
+
+      <!-- 동행 조건 -->
+      <div class="condition-group">
+        <strong>동행 조건</strong>
+        <ul id="conditionsList-server" class="tag-list" th:if="${recruit != null}">
+          <li th:each="c : ${recruit.conditions}" class="tag" th:text="${c.conditionName}"></li>
+        </ul>
+        <ul id="conditionsList-client" class="tag-list" th:if="${recruit == null}"></ul>
+      </div>
+
+      <!-- 동행 유형 -->
+      <div class="condition-group">
+        <strong>동행 유형</strong>
+        <div id="categoryText-server" class="tag" th:if="${recruit != null}"
+             th:text="${recruit.category}"></div>
+        <div id="categoryText-client" class="tag" th:if="${recruit == null}"></div>
+      </div>
+
+      <!-- 여행장 정보 -->
+      <div class="condition-group">
+        <strong>여행장</strong>
+        <div id="recruitOwnerInfo" class="tag-list"></div>
+      </div>
+
+      <!-- 같이 가는 사람 -->
+      <div class="condition-group">
+        <strong>같이 가는 사람</strong>
+        <ul id="approvalsList-server" class="tag-list" th:if="${recruit != null}">
+          <li th:each="a : ${recruit.approvals}"
+              th:if="${a.status == 'APPROVED'}"
+              class="tag"
+              th:text="${a.memberName + ' (' + a.memberAge + ', ' + a.memberGender + ')'}">
+          </li>
+        </ul>
+        <ul id="approvalsList-client" class="tag-list" th:if="${recruit == null}"></ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= 버튼 영역 ================= -->
+  <section class="action-section">
+    <div class="action-wrap">
+      <button class="btn btn-primary" id="btn-apply">참여하기</button>
+    </div>
+  </section>
+
+  <!-- JS -->
+
+
+</div>

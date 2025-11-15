@@ -1,0 +1,36 @@
+<div th:fragment="rightDefault">
+
+  <div class="trip-card-section">
+    <div class="trip-card-header">
+      <div class="trip-card-title">내 여행 카드 <span class="card-id">Trip Card</span></div>
+    </div>
+
+    <div class="card-stats">
+      <div class="stat-item">
+        <div class="stat-icon">🗺️</div>
+        <span id="dstcCnt" class="stat-value">0</span>
+        <div class="stat-label">Destination</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">📍</div>
+        <span id="ttlCnt" class="stat-value">0</span>
+        <div class="stat-label">Spot</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">📅</div>
+        <span id="dayCnt" class="stat-value">0</span>
+        <div class="stat-label">Days</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="trips-section">
+    <div class="trips-header">
+      <div class="trips-title">내 여행 일정</div>
+      <button class="btn-add-trip" onclick="createTrip()">일정 추가</button>
+    </div>
+
+    <div id="tripList" class="trip-list"></div>
+  </div>
+
+</div>

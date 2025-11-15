@@ -1,0 +1,126 @@
+
+#create-page {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0; /* 연한 테두리 */
+    border-radius: 12px;       /* 둥근 모서리 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* 연한 그림자 */
+
+}
+
+.form-page-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 20px;
+}
+
+.form-page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #00BFFF;
+}
+
+#tourist-create-form {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 16px 18px; /* ⬅️ 인풋 높이를 키우기 위해 패딩 증가 */
+    font-size: 15px;
+    font-family: inherit;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ddd; /* ⬅️ 연한 회색 테두리 */
+    border-radius: 8px;     /* ⬅️ 둥근 모서리 */
+    box-sizing: border-box;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-control::placeholder {
+    color: #aaa;
+    font-weight: 500;
+}
+
+.form-control:focus {
+    border-color: #00BFFF;
+    box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-control:disabled {
+    background-color: #f8f9fa; /* 연한 회색 배경 */
+    color: #777;
+    cursor: not-allowed;
+    border-color: #e9ecef;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center; /* ⬅️ 중앙 정렬 */
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #f0f0f0; /* 폼과 버튼 구분선 */
+}
+
+.btn-submit, .btn-cancel {
+    padding: 15px 35px; /* ⬅️ 버튼 크기 키움 */
+    border: none;
+    border-radius: 10px; /* ⬅️ 둥근 모서리 */
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.3s ease;
+    min-width: 140px; /* ⬅️ 최소 너비 */
+}
+
+.btn-submit {
+    background-color: #00BFFF;
+    color: white;
+    box-shadow: 0 4px 14px rgba(0, 191, 255, 0.25);
+}
+
+.btn-submit:hover {
+    background-color: #009acd;
+    box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3);
+}
+
+.btn-cancel {
+    background-color: #00BFFF;
+    color: white;
+    box-shadow: 0 4px 14px rgba(0, 191, 255, 0.25);
+}
+
+.btn-cancel:hover {
+    background-color: #009acd;
+    box-shadow: 0 2px 8px rgba(0, 191, 255, 0.3);
+}
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 15px;
+    color: #000;
+}
+.form-control::placeholder {
+    color: #999;
+    font-style: italic;
+}

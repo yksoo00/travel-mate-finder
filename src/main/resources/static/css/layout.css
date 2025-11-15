@@ -1,118 +1,114 @@
-/* /css/layout.css (지도 크기 복원 및 스크롤 유지) */
-
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* CRITICAL FIX: body와 html 높이를 100%로 설정하고, body를 Flex Column으로 설정합니다. (스크롤 유지) */
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f8f9fa;
-    display: flex;
-    flex-direction: column;
-    height: 100%; /* 화면 전체 높이 확보 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f8f9fa;
+  overflow: hidden; /* 전체 스크롤 제거 — 오른쪽만 스크롤 */
 }
 
+html, body {
+  height: 100%;
+}
 
-/* Main Layout */
+/* ========================= 메인 레이아웃 ========================= */
 .main-layout {
-    display: flex;
-    width: 100%;
-    flex-grow: 1; /* 남은 공간을 채움 (스크롤 문제 해결 유지) */
-
-    gap: 20px;
-    padding: 20px;
-    box-sizing: border-box;
-
-    min-height: 0; /* Flexbox 내에서 overflow를 허용하기 위해 추가 */
+  display: flex;
+  width: 100%;
+  height: 100vh; /* 전체 화면 고정 */
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-/* Left - Kakao Map */
+/* ========================= 왼쪽: 지도 영역 ========================= */
 .map-container {
-    flex: 1;
-    min-width: 100px;
-    max-width: 48%;
-    /* ⚠️ 복원: 높이를 원래대로 90%로 복원합니다. */
-    height: 90%;
-
-    border: #00BFFF;
-    overflow: hidden;
-
-    /* ⚠️ 복원: padding을 원래대로 100px로 복원합니다. */
-    padding: 100px;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 100px;
+  height: 100%;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  border: #00BFFF;
+  overflow: hidden;
+  padding: 50px 50px 100px 50px;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.map-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #00BFFF;
-    margin-bottom: 10px;
-    text-align: left;
-    padding-left: 5px;
+.section-title {
+  color: #00BFFF;
+  margin-bottom: 40px;
 }
 
 #map {
-    width: 100%;
-    height: 100%;
-    border: 3px solid #00BFFF;
-    border-radius: 8px;
-    box-sizing: border-box;
+  width: 100%;
+  height: 85%;
+  border: 1px solid #00BFFF;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
-/* Right - Content */
+/* ========================= 오른쪽: 컨텐츠 영역 ========================= */
 .content-container {
-    flex: 1;
-    min-width: 500px;
-    height: 100%;
-    overflow-y: auto; /* 이 속성은 유지되어 스크롤바가 생성됩니다. */
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #f9f9f9;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 500px;
+  height: 100%;
+  overflow-y: auto; /* ✅ 오른쪽만 스크롤 */
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: block; /* ✅ flex 해제하여 내부 높이 제한 문제 해결 */
 }
 
-/* 모바일 대응 */
-@media (max-width: 1024px) {
-    .main-layout {
-        flex-direction: column;
-        padding: 10px;
-        gap: 15px;
-    }
-
-    .map-container, .content-container {
-        flex: unset;
-        width: 100%;
-        height: 50vh;
-    }
+/* ✅ 내부 여백 확보 (버튼 짤림 방지) */
+.content-container > *:last-child {
+  margin-bottom: 100px; /* 버튼 공간 확보 */
 }
 
-/* Scrollbar Styling (유지) */
+/* ✅ 스크롤바 */
 .content-container::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 .content-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
+  background: #f1f1f1;
 }
 
 .content-container::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
+  background: #888;
+  border-radius: 4px;
 }
 
 .content-container::-webkit-scrollbar-thumb:hover {
-    background: #555;
+  background: #555;
+}
+
+.ouigo-overlay {
+  background: white;
+  border: 2px solid #00BFFF;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  white-space: nowrap;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+  transition: opacity 0.25s ease,
+  transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ouigo-overlay.show {
+  opacity: 1;
+  transform: translateY(0px) scale(1);
 }

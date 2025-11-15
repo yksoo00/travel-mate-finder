@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Page</title>
+
+  <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="login">
+  <div class="login__content">
+    <div class="login__img">
+      <img th:src="@{/images/Ouigo_icon.png}" alt="user login"/>
+    </div>
+
+    <div class="login__forms">
+      <!-- 로그인 폼 -->
+      <form th:action="@{/login}" method="post" class="login__register" id="login-in">
+        <h1 class="login__title">Sign In</h1>
+        <div class="login__box">
+          <i class="bx bx-user login__icon"></i>
+          <input type="text" name="username" placeholder="Username" class="login__input"/>
+        </div>
+        <div class="login__box">
+          <i class="bx bx-lock login__icon"></i>
+          <input type="password" name="password" placeholder="Password" class="login__input"/>
+        </div>
+        <button class="login__button" type="submit">Sign In</button>
+        <div>
+          <span class="login__signin" id="sign-up" onclick="toggleForm(true)">Sign Up</span>
+        </div>
+      </form>
+
+      <!-- 회원가입 폼 -->
+      <form th:action="@{/register}" method="post" class="login__create none" id="login-up"
+            novalidate>
+        <h1 class="login__title">Create Account</h1>
+
+        <div class="login__box id-check-container">
+          <input type="text" name="username" placeholder="ID" class="login__input"/>
+          <button type="button" class="id-check-btn">Check ID</button>
+        </div>
+
+        <div class="login__box">
+          <i class="bx bx-lock login__icon"></i>
+          <input type="password" name="password" placeholder="Password" class="login__input"/>
+        </div>
+        <div class="login__box">
+          <i class="bx bx-lock login__icon"></i>
+          <input type="password" name="confirmPassword" placeholder="Confirm Password"
+                 class="login__input"/>
+        </div>
+        <div class="login__box">
+          <i class="bx bx-user-circle login__icon"></i>
+          <input type="text" name="nickname" placeholder="Nickname" class="login__input"/>
+        </div>
+        <div class="login__box">
+          <i class="bx bx-at login__icon"></i>
+          <input type="email" name="email" placeholder="Email" class="login__input"/>
+        </div>
+        <div class="login__box">
+          <i class="bx bx-phone login__icon"></i>
+          <input type="tel" name="phone" placeholder="Phone Number" class="login__input"/>
+        </div>
+        <div class="login__box">
+          <i class="bx bx-map login__icon"></i>
+          <input type="text" name="introduce" placeholder="Introduce" class="login__input"/>
+        </div>
+        <div class="login__box">
+          <i class="bx bx-calendar login__icon"></i>
+          <input type="number" name="age" placeholder="Age" class="login__input" min="1"/>
+        </div>
+
+        <div class="login__box gender-box">
+          <label>
+            <input type="radio" name="gender" value="male"/>
+            <span>Male</span>
+          </label>
+          <label>
+            <input type="radio" name="gender" value="female"/>
+            <span>Female</span>
+          </label>
+        </div>
+
+        <!-- 회원가입 버튼 -->
+        <button class="login__button" type="submit">Sign Up</button>
+
+        <div>
+          <span class="login__signup" id="sign-in" onclick="toggleForm(false)">Sign In</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/login.js}"></script>
+<script>
+  function toggleForm(isRegister) {
+    const loginForm = document.getElementById('login-in');
+    const registerForm = document.getElementById('login-up');
+
+    if (isRegister) {
+      loginForm.classList.add('none');
+      registerForm.classList.remove('none');
+    } else {
+      loginForm.classList.remove('none');
+      registerForm.classList.add('none');
+    }
+  }
+</script>
+</body>
+</html>

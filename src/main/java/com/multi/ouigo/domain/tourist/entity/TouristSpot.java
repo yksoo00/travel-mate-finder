@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "touristspots")
@@ -27,6 +28,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TouristSpot extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,6 +44,7 @@ public class TouristSpot extends BaseEntity {
     private String phone;
     @OneToMany
     @JoinColumn(name = "reviews")
+    @Where(clause = "del_yn = 0")
     private List<Review> reviews = new ArrayList<>();
 
     public void update(@Valid TouristSpotReqDto touristSpotReqDto) {

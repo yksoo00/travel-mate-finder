@@ -1,5 +1,7 @@
 package com.multi.ouigo.domain.review.service;
 
+import com.multi.ouigo.common.exception.custom.NotFindException;
+import com.multi.ouigo.common.jwt.provider.TokenProvider;
 import com.multi.ouigo.domain.member.entity.Member;
 import com.multi.ouigo.domain.member.repository.MemberRepository;
 import com.multi.ouigo.domain.review.dto.req.ReviewReqDTO;
@@ -9,6 +11,7 @@ import com.multi.ouigo.domain.review.mapper.ReviewMapper;
 import com.multi.ouigo.domain.review.repository.ReviewRepository;
 import com.multi.ouigo.domain.tourist.entity.TouristSpot;
 import com.multi.ouigo.domain.tourist.repository.TouristSpotRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +28,7 @@ public class ReviewService {
     private final ReviewMapper reviewMapper;
     private final TouristSpotRepository touristRepository;
     private final MemberRepository memberRepository;
+    private final TokenProvider tokenProvider;
 
     public Page<ReviewResDTO> selectReviewTotalByTourist(Long touristId, Pageable pageable) {
         Page<Review> reviews = reviewRepository.findByTouristIdWithPaging(touristId, pageable);
@@ -35,13 +39,16 @@ public class ReviewService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Long registerReview(Long touristId, ReviewReqDTO reviewReqDTO, Long memberNo) {
+    public Long registerReview(Long touristId, ReviewReqDTO reviewReqDTO,
+        HttpServletRequest request) {
 
         TouristSpot tourist = touristRepository.findById(touristId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관광지입니다."));
 
-        Member member = memberRepository.findByNo(memberNo)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        String memberId = tokenProvider.extractMemberId(request);
+
+        Member member = memberRepository.findByMemberId(memberId)
+            .orElseThrow(() -> new NotFindException("없는 멤버입니다"));
 
         Review review = reviewMapper.toEntity(reviewReqDTO);
 

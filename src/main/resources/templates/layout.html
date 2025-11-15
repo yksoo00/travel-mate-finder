@@ -1,28 +1,63 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>OUIGO</title>
-    <link rel="stylesheet" th:href="@{/css/layout.css}">
-    <link rel="stylesheet" th:href="@{/css/navbar.css}">
-    <link rel="stylesheet" th:href="@{/css/recruit.css}">
-    <link rel="stylesheet" th:href="@{/css/touristDetail.css}">
-    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=477a1cea9ecc7c2b3e69f3540a3986b4&libraries=services"></script>
+  <meta charset="UTF-8">
+
+  <!-- 1) 반드시 head 최상단에서, defer 없이 -->
+
+
+  <title th:text="${pageTitle != null} ? ${pageTitle} : 'OUIGO'">OUIGO</title>
+
+  <link rel="stylesheet" th:href="@{/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/css/navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/recruit.css}">
+  <link rel="stylesheet" th:href="@{/css/recruit-detail.css}">
+  <link rel="stylesheet" th:href="@{/css/recruit-create.css}">
+  <link rel="stylesheet" th:href="@{/css/recruit-update.css}">
+  <link rel="stylesheet" th:href="@{/css/touristDetail.css}">
 </head>
+
 <body>
+
+<!-- 1) 📌 Kakao SDK 먼저 로드 (절대 defer 금지) -->
+<script
+    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8b23243ecce1d67f7d49784724586afa&libraries=services"></script>
+
 <div th:replace="~{navbar :: navbar}"></div>
+<script th:src="@{/js/navbar.js}" defer></script>
+<script th:src="@{/js/api.js}" defer></script>
+
+<!-- 2) 📌 map-core.js는 가장 먼저 실행 (defer 금지) -->
 
 <div class="main-layout">
-    <div class="map-container">
-        <div id="map"></div>
-    </div>
+  <div class="map-container">
+    <h2 class="section-title">카카오 맵</h2>
+    <div id="map"></div>
+  </div>
 
-    <div class="content-container">
-        <div th:replace="tourist/touristDetail :: touristContent"></div>
-    </div>
+  <div class="content-container">
+    <div th:replace="~{${pageFragment} :: recruitContent}"></div>
+  </div>
 </div>
 
-<script th:src="@{/js/map.js}"></script>
-<script th:src="@{/js/touristDetail.js}"></script>
+<!-- 목록 페이지 (defer OK) -->
+<script th:src="@{/js/map.js}" defer></script>
+<script th:if="${pageName == 'list'}" th:src="@{/js/markerManager-recruit.js}"
+        defer></script>
+<script th:if="${pageName == 'list'}" th:src="@{/js/recruit-list.js}" defer></script>
+
+<!-- 상세 페이지 (defer OK) -->
+<script th:if="${pageName == 'detail'}" th:src="@{/js/recruit-detail.js}" defer></script>
+<script th:if="${pageName == 'touristDetail'}" th:src="@{/js/touristDetail.js}" defer></script>
+
+<!-- 생성/수정 페이지 -->
+<!-- 3) 📌 map-marker-select.js는 바로 뒤에서 실행 (defer 금지) -->
+<script th:if="${pageName == 'create' || pageName == 'update'||pageName=='touristDetail'}"
+        th:src="@{/js/map-marker-select.js}"></script>
+
+<!-- 그 다음 생성/수정 JS (defer OK) -->
+<script th:if="${pageName == 'create'}" th:src="@{/js/recruit-create.js}" defer></script>
+<script th:if="${pageName == 'update'}" th:src="@{/js/recruit-update.js}" defer></script>
+
 </body>
 </html>

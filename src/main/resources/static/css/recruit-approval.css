@@ -1,0 +1,161 @@
+.approval-container {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #00BFFF;
+  border-left: 5px solid #00BFFF;
+  padding-left: 10px;
+}
+
+.approval-section {
+  margin-bottom: 60px;
+}
+
+.approval-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #cbe9ff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.approval-table th,
+.approval-table td {
+  border: 1px solid #d6f0ff;
+  padding: 12px;
+  text-align: center;
+}
+
+.approval-table th {
+  background-color: #f3fbff;
+  font-weight: 700;
+}
+
+.approval-table tr:nth-child(even) {
+  background-color: #fafcff;
+}
+
+.empty {
+  color: #999;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-approve {
+  background-color: #00BFFF;
+  color: white;
+}
+
+.btn-reject {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+.btn-delete {
+  background-color: #ccc;
+  color: #333;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* ✅ 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+}
+
+.pagination button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #00BFFF;
+  background: #fff;
+  color: #00BFFF;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.pagination button:hover:not(.active):not(:disabled) {
+  background: #e8f7ff;
+}
+
+.pagination button.active {
+  background: #00BFFF;
+  color: white;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 관광지 버튼 */
+.tourist-btn {
+  background-color: #f0faff;
+  border: 1px solid #bde8ff;
+  color: #00BFFF;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.tourist-btn:hover {
+  background-color: #00BFFF;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 191, 255, 0.25);
+}
+
+.btn-delete:hover {
+  background-color: #999;
+  color: white;
+}
+
+.status-tag {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+}
+
+/* 승인 */
+.status-tag.approved {
+  background-color: #00BFFF;
+}
+
+/* 거절 */
+.status-tag.rejected {
+  background-color: #ff6b6b;
+}
+
+/* 대기 */
+.status-tag.pending {
+  background-color: #FFC107;
+  color: #333;
+}

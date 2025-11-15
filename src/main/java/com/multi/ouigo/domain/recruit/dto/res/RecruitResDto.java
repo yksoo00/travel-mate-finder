@@ -21,7 +21,10 @@ public class RecruitResDto {
     private LocalDate endDate;
     private List<ApprovalResDto> approvals;
     private List<ConditionResDto> conditions;
+    private String category;
     private String touristSpotAddress;
+    private String touristSpotTitle;
+    private String memberId;
     private String memberName;
     private int memberAge;
     private String memberGender;

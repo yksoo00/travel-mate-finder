@@ -38,12 +38,15 @@ public interface RecruitMapper {
     @Mapping(target = "recruitContent", source = "content")
     @Mapping(target = "startDate", source = "startDate")
     @Mapping(target = "endDate", source = "endDate")
+    @Mapping(target = "category", source = "category")
     @Mapping(target = "approvals", source = "approvals", qualifiedByName = "toApprovalDtoList")
     @Mapping(target = "conditions", source = "conditions", qualifiedByName = "toConditionDtoList")
     @Mapping(target = "touristSpotAddress", expression = "java(recruit.getTouristSpot().getAddress())")
+    @Mapping(target = "touristSpotTitle", expression = "java(recruit.getTouristSpot().getTitle())")
     @Mapping(target = "memberAge", expression = "java(recruit.getMember().getAge())")
     @Mapping(target = "memberGender", expression = "java(recruit.getMember().getGender())")
     @Mapping(target = "memberName", expression = "java(recruit.getMember().getNickName())")
+    @Mapping(target = "memberId", expression = "java(recruit.getMember().getMemberId())")
     RecruitResDto toResDto(Recruit recruit);
 
     @Named("toApprovalDtoList")

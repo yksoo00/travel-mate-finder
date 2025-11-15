@@ -1,0 +1,48 @@
+.input-box,
+.input-select,
+.input-textarea,
+.input-date {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #bde8ff;
+  border-radius: 8px;
+  background-color: #f9fcff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-box:focus,
+.input-select:focus,
+.input-textarea:focus,
+.input-date:focus {
+  border-color: #00BFFF;
+  box-shadow: 0 0 4px rgba(0, 191, 255, 0.3);
+  outline: none;
+}
+
+.input-textarea {
+  resize: vertical;
+  min-height: 160px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+  background: #f9fcff;
+  padding: 12px;
+  border: 1px solid #e2f5ff;
+  border-radius: 8px;
+}
+
+.checkbox-group label {
+  font-weight: 500;
+  color: #333;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: 6px;
+  accent-color: #00BFFF;
+}

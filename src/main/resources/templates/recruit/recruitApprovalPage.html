@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>내 모집 관리</title>
+  <link rel="stylesheet" th:href="@{/css/navbar.css}"/>
+  <link rel="stylesheet" th:href="@{/css/recruit-approval.css}"/>
+</head>
+<body>
+<!-- ✅ 네비바 -->
+<div th:replace="~{navbar :: navbar}"></div>
+
+<main class="approval-container" th:attr="data-member-no=${memberNo}">
+  <!-- ================= 내 승인 모집 ================= -->
+  <section class="approval-section">
+    <h2 class="section-title blue">내 승인 모집</h2>
+    <table class="approval-table" id="myRecruitTable">
+      <thead>
+      <tr>
+        <th>번호</th>
+        <th>닉네임(프로필)</th>
+        <th>관광지 이름</th>
+        <th>승인/거절</th>
+        <th>제거</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td colspan="5" class="empty">데이터를 불러오는 중...</td>
+      </tr>
+      </tbody>
+    </table>
+    <div id="myRecruitPagination" class="pagination"></div>
+  </section>
+
+  <!-- ================= 신청한 모집 ================= -->
+  <section class="approval-section">
+    <h2 class="section-title blue">신청한 모집</h2>
+    <table class="approval-table" id="appliedRecruitTable">
+      <thead>
+      <tr>
+        <th>번호</th>
+        <th>닉네임(프로필)</th>
+        <th>관광지 이름</th>
+        <th>현재 상태</th>
+        <th>제거</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td colspan="5" class="empty">데이터를 불러오는 중...</td>
+      </tr>
+      </tbody>
+    </table>
+    <div id="myApplyPagination" class="pagination"></div>
+  </section>
+</main>
+
+<script th:src="@{/js/recruit-approval.js}" defer></script>
+<script th:src="@{/js/api.js}" defer></script>
+</body>
+</html>

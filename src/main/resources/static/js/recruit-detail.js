@@ -1,0 +1,243 @@
+document.addEventListener('DOMContentLoaded', async () => {
+  if (window.recruitDetailLoaded) {
+    return;
+  }
+  window.recruitDetailLoaded = true;
+
+  const container = document.getElementById('recruitDetailContainer');
+  const recruitId = container?.dataset.recruitId;
+
+  if (!recruitId) {
+    console.error("recruitId가 없습니다.");
+    return;
+  }
+
+  const loggedInMemberId = localStorage.getItem('memberId'); // 로그인 ID
+
+  const conditionMap = {
+    G100: "남자",
+    G101: "여자",
+    C100: "10대",
+    C101: "20대",
+    C102: "30대",
+    C103: "40대",
+    C104: "50대",
+    C105: "60대"
+  };
+
+  try {
+    // ============================================================
+    // ✅ 모집글 상세 조회 (fetch → apiFetch)
+    // ============================================================
+    const response = await apiFetch(`/api/v1/recruit/${recruitId}`);
+    if (!response.ok) {
+      throw new Error('상세 조회 실패');
+    }
+    const result = await response.json();
+    const data = result.data;
+    // 상세 조회 끝난 뒤 touristSpotAddress 받아온 상태에서
+    const touristSpotAddress = data.touristSpotAddress;
+
+    if (touristSpotAddress && window.map) {
+      const geocoder = new kakao.maps.services.Geocoder();
+
+      window.geocoder.addressSearch(touristSpotAddress,
+          function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+
+              const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+              // 마커 찍기
+              const marker = new kakao.maps.Marker({
+                map: map,
+                position: coords
+              });
+              const overlayDiv = document.createElement("div");
+              overlayDiv.className = "ouigo-overlay";
+              overlayDiv.innerText = data.touristSpotTitle;
+
+              const overlay = new kakao.maps.CustomOverlay({
+                position: coords,
+                content: overlayDiv,
+                yAnchor: 1.7,
+                xAnchor: 0.5
+              });
+
+              // 처음에는 숨김
+              overlay.setMap(null);
+
+              // 🔵 마우스 올리면 표시
+              kakao.maps.event.addListener(marker, "mouseover", () => {
+                overlay.setMap(map);
+                overlayDiv.classList.add("show");
+              });
+
+              // 🔵 마우스 벗어나면 숨김
+              kakao.maps.event.addListener(marker, "mouseout", () => {
+                overlayDiv.classList.remove("show");
+
+                setTimeout(() => {
+                  if (!overlayDiv.classList.contains("show")) {
+                    overlay.setMap(null);
+                  }
+                }, 150);
+              });
+
+              // 지도 중심 이동
+              map.setCenter(coords);
+
+            }
+
+          });
+    }
+    // ========== 여행장 정보 ==========
+    const ownerInfo = document.getElementById('recruitOwnerInfo');
+    if (ownerInfo && data.memberName) {
+      ownerInfo.innerHTML = '';
+      const div = document.createElement('div');
+      const genderText = data.memberGender === 'M' ? '남' : '여';
+      const genderClass = data.memberGender === 'M' ? 'male' : 'female';
+      div.className = `tag ${genderClass}`;
+      div.innerHTML = `👤 ${data.memberName} (${genderText}, ${data.memberAge}세)`;
+      ownerInfo.appendChild(div);
+    }
+
+    // 기본 표시
+    document.getElementById(
+        'recruitTitle-client').textContent = data.recruitTitle;
+    document.getElementById(
+        'recruitContent-client').textContent = data.recruitContent;
+    document.getElementById(
+        'recruitPeriod-client').textContent = `${data.startDate} ~ ${data.endDate}`;
+    document.getElementById(
+        'touristSpotAddress-client').textContent = data.touristSpotAddress;
+
+    // ========== 조건 ==========
+    const conditionsList = document.getElementById('conditionsList-client');
+    conditionsList.innerHTML = '';
+    data.conditions?.forEach(c => {
+      const li = document.createElement('li');
+      li.textContent = conditionMap[c.code?.toUpperCase()] || c.code;
+      li.className = 'tag';
+      conditionsList.appendChild(li);
+    });
+
+    // ========== 카테고리 ==========
+    const categoryEl = document.getElementById('categoryText-client');
+    categoryEl.textContent = data.category || '미정';
+    categoryEl.className = 'tag type';
+
+    // ========== 승인된 동행자 ==========
+    const approvalsList = document.getElementById('approvalsList-client');
+    approvalsList.innerHTML = '';
+
+    const approvedList = data.approvals?.filter(a => a.status === 'APPROVED')
+        || [];
+
+    if (approvedList.length === 0) {
+      approvalsList.innerHTML = `<li class="tag">승인된 동행자가 없습니다</li>`;
+    } else {
+      approvedList.forEach(a => {
+        const li = document.createElement('li');
+        const genderClass = a.memberGender === 'M' ? 'male' : 'female';
+        const gender = a.memberGender === 'M' ? '남' : '여';
+
+        li.className = `tag ${genderClass}`;
+        li.textContent = `${a.memberName} (${gender}, ${a.memberAge}세)`;
+
+        approvalsList.appendChild(li);
+      });
+    }
+
+    // ============================================================
+    // ✅ 본인 글이면 수정/삭제 버튼 노출
+    // ============================================================
+    const actionWrap = document.querySelector('.action-wrap');
+    if (loggedInMemberId && data.memberId && loggedInMemberId
+        === data.memberId) {
+      const editBtn = document.createElement('button');
+      editBtn.id = 'btn-edit';
+      editBtn.className = 'btn btn-secondary';
+      editBtn.textContent = '수정하기';
+      editBtn.addEventListener('click', () => {
+        window.location.href = `/recruit/recruitUpdatePage/${recruitId}`;
+      });
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.id = 'btn-delete';
+      deleteBtn.className = 'btn btn-danger';
+      deleteBtn.textContent = '삭제하기';
+
+      deleteBtn.addEventListener('click', async () => {
+        if (!confirm('정말 삭제하시겠습니까?')) {
+          return;
+        }
+
+        try {
+          const res = await apiFetch(`/api/v1/recruit/${recruitId}`,
+              {method: 'DELETE'});
+          const result = await res.json();
+
+          if (res.ok) {
+            alert(result.message || '삭제 성공');
+            window.location.href = '/layout';
+          } else {
+            alert(result.message || '삭제 실패');
+          }
+
+        } catch (err) {
+          console.error('삭제 오류:', err);
+          alert('서버 통신 중 오류가 발생했습니다.');
+        }
+      });
+
+      const applyBtn = document.getElementById('btn-apply');
+      actionWrap.insertBefore(deleteBtn, applyBtn);
+      actionWrap.insertBefore(editBtn, applyBtn);
+    }
+
+    // ============================================================
+    // ✅ 참여하기 버튼
+    // ============================================================
+    const applyBtn = document.getElementById('btn-apply');
+
+    applyBtn.addEventListener('click', async () => {
+      if (!localStorage.getItem("accessToken")) {
+        alert('로그인이 필요합니다.');
+        window.location.href = '/loginForm';
+        return;
+      }
+
+      if (!confirm('이 모집에 참여하시겠습니까?')) {
+        return;
+      }
+
+      try {
+        const res = await apiFetch(`/api/v1/recruit/participation/${recruitId}`,
+            {
+              method: 'POST'
+            });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          alert(result.message || '참여 신청 완료');
+          window.location.href = '/layout';
+        } else {
+          const msg = result.message || '참여 실패';
+          if (msg.includes('이미 신청')) {
+            alert('이미 참여한 모집글입니다.');
+          } else {
+            alert(msg);
+          }
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert('참여 중 오류가 발생했습니다.');
+      }
+    });
+
+  } catch (err) {
+    console.error('Error:', err);
+  }
+});

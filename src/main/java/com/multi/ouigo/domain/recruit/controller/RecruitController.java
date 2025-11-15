@@ -98,4 +98,33 @@ public class RecruitController {
             .body(new ResponseNoDateDto(HttpStatus.NO_CONTENT, "참여 신청 되었습니다"));
     }
 
+    @GetMapping("/touristSpot/{touristSpotId}")
+    public ResponseEntity<ResponseDto> findAllRecruit(HttpServletRequest request,
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "3") int size,
+        @PathVariable(name = "touristSpotId") Long touristSpotId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return ResponseEntity.ok()
+            .body(new ResponseDto(HttpStatus.OK, "모집 전체 조회 성공",
+                recruitService.findAllRecruitByTouristSpotId(request, pageable,
+                    touristSpotId)));
+
+
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ResponseDto> findAllRecruitBySearch(HttpServletRequest request,
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "3") int size,
+        @RequestParam(name = "title", required = false) String title,
+        @RequestParam(name = "content", required = false) String content) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return ResponseEntity.ok()
+            .body(new ResponseDto(HttpStatus.OK, "모집 전체 조회 성공",
+                recruitService.findAllRecruitBySearch(request, pageable,
+                    title, content)));
+
+
+    }
+
 }
