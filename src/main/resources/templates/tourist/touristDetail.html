@@ -2,7 +2,7 @@
     <div class="tourist-detail-wrapper">
         <div id="touristDetailContainer" th:attr="data-tourist-id=${touristSpotId}"></div>
 
-        <div class="image-slider-container">
+        <div class="image-slider-container" style="display:none;">
             <div id="main-image-placeholder" class="main-image-placeholder">
                 [메인 이미지 로딩 중]
             </div>
@@ -11,7 +11,7 @@
         <div class="spot-info-section">
             <div class="spot-title-row">
                 <h2 id="spot-title" class="spot-info-display title">제목 로딩 중</h2>
-                <div class="spot-actions">
+                <div class="spot-actions" id="spot-admin-buttons" style="display:none;">
                     <button class="btn-spot-edit">수정</button>
                     <button class="btn-spot-delete">삭제</button>
                 </div>

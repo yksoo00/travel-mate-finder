@@ -35,10 +35,17 @@ public class TouristSpotController {
     private final TouristSpotService touristSpotService;
 
     @GetMapping("/tourist-spots/markers")
-    public ResponseEntity<ResponseDto> getTouristSpots() {
-        List<TouristSpotResDto> touristSpots = touristSpotService.getTouristSpots();
+    public ResponseEntity<ResponseDto> getTouristSpots(
+            @RequestParam(name = "keyword", required = false) String keyword
+    ) {
+        List<TouristSpotResDto> touristSpots = touristSpotService.getTouristSpots(keyword);
+
+        String message = (keyword == null || keyword.isBlank()) ?
+                "마커에 표시할 모든 관광지 조회 완료" :
+                "키워드 검색 마커 조회 완료";
+
         return ResponseEntity.ok()
-            .body(new ResponseDto(HttpStatus.OK, "마커에 표시할 모든 관광지 조회 완료", touristSpots));
+                .body(new ResponseDto(HttpStatus.OK, message, touristSpots));
     }
 
     @GetMapping("/tourist-spots")

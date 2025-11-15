@@ -58,22 +58,24 @@
         <div class="form-group">
           <label for="description" class="form-label">설명</label>
           <textarea id="description" name="description" class="form-control" rows="5"
-                    placeholder="이 관광지에 대한 간단한 설명을 적어주세요."></textarea>
+                    placeholder="이 관광지에 대한 간단한 설명을 적어주세요." required></textarea>
         </div>
 
-        <div class="form-group">
-          <label for="map-address-display" class="form-label">주소 (관광지 선택)</label>
-          <input type="text" id="map-address-display" class="form-control" disabled
-                 placeholder="지도에서 관광지를 클릭하면 자동 입력됩니다.">
-        </div>
+          <div class="form-group">
+              <label for="map-address-display" class="form-label">주소 (관광지 선택)</label>
+              <input type="text" id="map-address-display" class="form-control" disabled
+                     placeholder="지도에서 관광지를 클릭하면 자동 입력됩니다.">
+          </div>
 
-        <!-- touristSpotId 값을 숨겨서 저장 -->
-        <input type="hidden" id="touristSpotId">
+          <input type="hidden" id="address" name="address">
+
+
+          <input type="hidden" id="touristSpotId">
 
         <div class="form-group">
           <label for="phone" class="form-label">전화번호</label>
           <input type="text" id="phone" name="phone" class="form-control"
-                 placeholder="예: 02-123-4567">
+                 placeholder="예: 02-123-4567" required>
         </div>
 
         <div class="form-actions">
@@ -93,6 +95,14 @@
   document.getElementById('tourist-create-form').addEventListener('submit', async function (event) {
 
     event.preventDefault();
+
+      const addressInput = document.getElementById('address'); //
+      const addressValue = addressInput.value.trim();
+
+      if (addressValue === '') {
+          alert('지도에서 관광지 위치를 클릭하여 주소를 선택해주세요.');
+          return; // 폼 제출 중단
+      }
 
     const form = event.target;
     const formData = new FormData(form);
@@ -114,7 +124,7 @@
       alert(data.message);
 
       const newSpotId = data.data;
-      window.location.href = "/tourist/touristDetail?id=" + newSpotId;
+      window.location.href = "/tourist/touristDetail/" + newSpotId;
 
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -122,5 +132,6 @@
     }
   });
 </script>
+
 </body>
 </html>

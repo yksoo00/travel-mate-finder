@@ -55,8 +55,22 @@ public class TouristSpotServiceImpl implements TouristSpotService {
     }
 
     @Override
-    public List<TouristSpotResDto> getTouristSpots() {
-        List<TouristSpot> touristSpots = touristSpotRepository.findAll();
+    public List<TouristSpotResDto> getTouristSpots(String keyword) { // 1. keyword 파라미터 추가
+
+        // 2. paged 메서드에서 Specification 로직 복사
+        Specification<TouristSpot> spec = (root, query, cb) -> null;
+        if (keyword != null && !keyword.isBlank()) {
+            spec = spec.and(Specification.anyOf(
+                    TouristSpotSpecification.titleContains(keyword),
+                    TouristSpotSpecification.descriptionContains(keyword),
+                    TouristSpotSpecification.addressContains(keyword),
+                    TouristSpotSpecification.districtContains(keyword),
+                    TouristSpotSpecification.phoneContains(keyword)
+            ));
+        }
+
+        // 3. findAll()을 findAll(spec)으로 변경
+        List<TouristSpot> touristSpots = touristSpotRepository.findAll(spec);
 
         return touristSpots.stream()
                 .map(touristSpotMapper::toResDto)
@@ -89,7 +103,10 @@ public class TouristSpotServiceImpl implements TouristSpotService {
     @Transactional
     @Override
     public void deleteById(Long id) {
-        touristSpotRepository.deleteById(id);
+
+        TouristSpot touristSpot = touristSpotRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("삭제할 관광지가 존재하지 않습니다."));
+        touristSpot.setDeleted(true);
     }
 
     @Override
