@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const mapContainer = document.getElementById('map');
     const mapOption = {
         center: new kakao.maps.LatLng(37.566826, 126.9786567),
-        level: 7
+        level: 13
     };
 
     map = new kakao.maps.Map(mapContainer, mapOption);
