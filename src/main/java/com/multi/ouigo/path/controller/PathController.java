@@ -1,5 +1,10 @@
 package com.multi.ouigo.path.controller;
 
+import com.multi.ouigo.common.exception.custom.TokenException;
+import com.multi.ouigo.common.jwt.provider.TokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,7 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@RequiredArgsConstructor
+@Slf4j
 public class PathController {
+
+    private final TokenProvider tokenProvider;
 
     @GetMapping("/tourist/touristListPage")
     public String TouristPage() {
@@ -28,10 +37,23 @@ public class PathController {
 
 
     @GetMapping("/tourist/touristDetail/{touristId}")
-    public String TouristDetailPage(@PathVariable Long touristId, Model model) {
+    public String TouristDetailPage(@PathVariable Long touristId, Model model, HttpServletRequest request) {
         model.addAttribute("touristSpotId", touristId);
         model.addAttribute("pageName", "touristDetail");
         model.addAttribute("pageFragment", "tourist/touristDetail");
+
+        String currentMemberId = null;
+        try {
+            currentMemberId = tokenProvider.extractMemberId(request);
+            log.info("[PathController] 로그인 사용자 ID: {}", currentMemberId);
+        } catch (TokenException e) {
+            // 토큰이 없거나 유효하지 않은 경우 -> 로그인 X 상태
+            log.warn("[PathController] 로그인 상태가 아닙니다.");
+            // currentMemberId는 이미 null로 유지됩니다.
+        }
+
+        // 로그인 여부와 관계없이 모델에 추가
+        model.addAttribute("currentMemberId", currentMemberId);
         return "layout";
     }
 

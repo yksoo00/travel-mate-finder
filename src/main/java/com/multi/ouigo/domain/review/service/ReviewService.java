@@ -61,10 +61,16 @@ public class ReviewService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Long updateReview(Long reviewId, ReviewReqDTO reviewReqDTO) {
+    public Long updateReview(Long reviewId, ReviewReqDTO reviewReqDTO, HttpServletRequest request) {
 
         Review review = reviewRepository.findById(reviewId)
             .orElseThrow(() -> new IllegalArgumentException("리뷰가 존재하지 않습니다."));
+
+        String currentMemberId = tokenProvider.extractMemberId(request);
+
+        if (!review.getMember().getMemberId().equals(currentMemberId)) {
+            throw new IllegalArgumentException("리뷰 수정 권한이 없습니다.");
+        }
 
         review.update(reviewReqDTO.getContent());
 
@@ -72,10 +78,16 @@ public class ReviewService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Long deleteReview(Long reviewId) {
+    public Long deleteReview(Long reviewId, HttpServletRequest request) {
 
         Review review = reviewRepository.findById(reviewId)
             .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+
+        String currentMemberId = tokenProvider.extractMemberId(request);
+
+        if (!review.getMember().getMemberId().equals(currentMemberId)) {
+            throw new IllegalArgumentException("리뷰 삭제 권한이 없습니다.");
+        }
 
         review.setDeleted(true);
 

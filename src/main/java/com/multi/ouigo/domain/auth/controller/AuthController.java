@@ -6,16 +6,12 @@ import com.multi.ouigo.common.response.ResponseDto;
 import com.multi.ouigo.domain.auth.service.AuthService;
 import com.multi.ouigo.domain.member.dto.req.MemberSignInDto;
 import com.multi.ouigo.domain.member.dto.req.MemberSignUpDto;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -54,6 +50,23 @@ public class AuthController {
         tokenService.registBlackList(accessToken);
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "로그아웃 성공", null));
     }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<ResponseDto> getCurrentUser(HttpServletRequest request) {
+        try {
+            String memberId = tokenService.getMemberIdFromAccessToken(request);
+
+            return ResponseEntity.ok(
+                    new ResponseDto(HttpStatus.OK, "로그인 사용자 조회 성공", memberId)
+            );
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseDto(HttpStatus.UNAUTHORIZED, "로그인되지 않은 사용자", null));
+        }
+    }
+
 
 
 }
