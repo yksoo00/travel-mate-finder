@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    loadAllMarkers();
+    loadMapMarkers();
     loadPage(0);
 });
 
@@ -34,24 +34,35 @@ window.addEventListener("globalSearch", async (e) => {
 
     // 전역 검색어 상태 업데이트
     currentKeyword = keyword.length > 0 ? keyword : null;
+    //
+    loadMapMarkers(currentKeyword);
 
     // 첫 페이지부터 다시 조회
     loadPage(0);
 });
 
 /* --------------------------------------------------------
- * 🔵 모든 마커 로드 (fetch → apiFetch 변경)
+ * 🔵 (수정) 키워드에 맞는 마커 로드 (fetch → apiFetch 변경)
  * -------------------------------------------------------- */
-async function loadAllMarkers() {
+async function loadMapMarkers(keyword) {
+    if (window.clearMarkers) {
+        window.clearMarkers();
+    }
+
+    let url = `/api/v1/tourist-spots/markers`;
+    if (keyword && keyword.trim() !== '') {
+        url += `?keyword=${encodeURIComponent(keyword)}`;
+    }
+
     try {
-        const response = await apiFetch(`/api/v1/tourist-spots/markers`);
+        const response = await apiFetch(url);
         const data = await response.json();
 
         const allSpots = data.data;
-        displayMapMarkers(allSpots);
+        displayMapMarkers(allSpots); // 3. 새 마커 표시
 
     } catch (error) {
-        console.error('Error fetching all markers:', error);
+        console.error('Error fetching markers with keyword:', error);
     }
 }
 

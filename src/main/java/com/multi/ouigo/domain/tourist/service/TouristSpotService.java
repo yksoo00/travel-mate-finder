@@ -13,7 +13,7 @@ import java.util.List;
 public interface TouristSpotService {
 
     Page<TouristSpotResDto> getTouristSpots(String keyword, Pageable pageable);
-    List<TouristSpotResDto> getTouristSpots();
+    List<TouristSpotResDto> getTouristSpots(String keyword);
     TouristSpotAllResDto getTouristSpotById(Long id);
 
     Long save(TouristSpotReqDto touristSpotReqDto);
