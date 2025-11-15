@@ -25,7 +25,18 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("❌ touristId가 존재하지 않습니다.");
     return;
   }
+    const userRole = localStorage.getItem('memberId');
+    console.log("현재 사용자 역할(memberId):", userRole);
 
+    if (userRole && userRole.includes('admin')) {
+
+        const adminButtonsContainer = document.getElementById('spot-admin-buttons');
+
+        if (adminButtonsContainer) {
+            adminButtonsContainer.style.display = 'flex';
+            console.log("관리자 버튼을 표시합니다.");
+        }
+    }
   // 상세 + 리뷰 로드
   fetchDetails(touristId);
   fetchReviewsAndRender(0);
