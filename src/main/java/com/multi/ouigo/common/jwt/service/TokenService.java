@@ -7,17 +7,15 @@ import com.multi.ouigo.common.jwt.provider.TokenProvider;
 import com.multi.ouigo.domain.member.entity.Member;
 import com.multi.ouigo.domain.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -136,5 +134,16 @@ public class TokenService {
         redisTemplate.opsForValue().set(key, "logout", Duration.ofMillis(remainTime));
 
         System.out.println("블랙리스트 등록 완료: " + key + " (TTL: " + expiration + "ms)");
+    }
+
+    public String getMemberIdFromAccessToken(HttpServletRequest request) {
+        String bearer = request.getHeader("Authorization");
+
+        if (bearer == null || !bearer.startsWith("Bearer "))
+            throw new TokenException("Authorization 헤더 없음");
+
+        String token = tokenProvider.resolveToken(bearer);
+
+        return tokenProvider.getUserId(token); // subject = memberId
     }
 }

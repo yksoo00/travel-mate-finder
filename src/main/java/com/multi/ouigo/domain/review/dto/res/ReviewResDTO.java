@@ -19,4 +19,5 @@ public class ReviewResDTO {
     private LocalDateTime updatedAt;
     private String nickNm;
     private String  profImg;
+    private String memberId;
 }

@@ -32,8 +32,8 @@ public class ReviewController {
 
     @GetMapping("/{id}")    // 리뷰 pageable 조회
     public ResponseEntity<ResponseDto> getReviewsByTourist(@PathVariable("id") Long touristId,
-        @RequestParam(name = "page", defaultValue = "0") int page,
-        @RequestParam(name = "size", defaultValue = "5") int size) {
+                                                           @RequestParam(name = "page", defaultValue = "0") int page,
+                                                           @RequestParam(name = "size", defaultValue = "5") int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         Page<ReviewResDTO> reviews = reviewService.selectReviewTotalByTourist(touristId, pageable);
@@ -44,24 +44,26 @@ public class ReviewController {
 
     @PostMapping("/{id}")   // 리뷰 등록
     public ResponseEntity<ResponseDto> registerReviewByNo(@PathVariable("id") Long touristId,
-        @RequestBody ReviewReqDTO reviewReqDTO,
-        HttpServletRequest request) {
+                                                          @RequestBody ReviewReqDTO reviewReqDTO,
+                                                          HttpServletRequest request) {
         Long findTouristId = reviewService.registerReview(touristId, reviewReqDTO, request);
         return ResponseEntity.ok()
-            .body(new ResponseDto(HttpStatus.CREATED, "리뷰 등록 성공", findTouristId));
+                .body(new ResponseDto(HttpStatus.CREATED, "리뷰 등록 성공", findTouristId));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDto> updateReview(@PathVariable("id") Long reviewId,
-        @RequestBody ReviewReqDTO reviewReqDTO) {
-        Long touristId = reviewService.updateReview(reviewId, reviewReqDTO);
+                                                    @RequestBody ReviewReqDTO reviewReqDTO,
+                                                    HttpServletRequest request) {
+        Long touristId = reviewService.updateReview(reviewId, reviewReqDTO, request);
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "리뷰 수정 성공", touristId));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> deleteReview(@PathVariable("id") Long reviewId) {
+    public ResponseEntity<ResponseDto> deleteReview(@PathVariable("id") Long reviewId,
+                                                    HttpServletRequest request) {
 
-        Long touristId = reviewService.deleteReview(reviewId);
+        Long touristId = reviewService.deleteReview(reviewId, request);
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "리뷰가 삭제되었습니다.", touristId));
     }
 

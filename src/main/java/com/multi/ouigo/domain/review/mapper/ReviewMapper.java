@@ -14,8 +14,8 @@ public interface ReviewMapper {
     @Mapping(source = "member.profileImage", target = "profImg")    // Member 프로필 이미지
     @Mapping(source = "tourist.id", target = "touristId")   // 관광지 ID
     @Mapping(source = "cont", target = "content")   // 리뷰 내용
-    @Mapping(source = "id", target = "id")
-        // 리뷰 ID
+    @Mapping(source = "id", target = "id")  // 리뷰 ID
+    @Mapping(source = "member.memberId", target = "memberId")   //작성자
 
     ReviewResDTO toResDto(Review review);
 
