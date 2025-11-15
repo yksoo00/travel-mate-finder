@@ -49,7 +49,7 @@ function displayMapMarkers(spots) {
         });
 
         kakao.maps.event.addListener(marker, 'click', function () {
-          window.location.href = `/layout/${spot.id}`;
+          window.location.href = `/tourist/touristDetail/${spot.id}`;
         });
 
         kakao.maps.event.addListener(marker, 'mouseover', function () {

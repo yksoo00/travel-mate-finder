@@ -1,6 +1,5 @@
-let markers = [];
-
 function displayMapMarkers(spots) {
+  markers = window.markers
   markers.forEach(m => m.setMap(null));
   markers = [];
 

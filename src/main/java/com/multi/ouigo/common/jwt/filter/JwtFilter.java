@@ -44,7 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
         "/layout/**",
         "/navbar/**",
         "/static/**"
-        
+
     };
 
 

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>관광지 상세 보기</title>
+  <script type="text/javascript"
+          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8b23243ecce1d67f7d49784724586afa&libraries=services"></script>
+  <style>
+    #image-gallery {
+      margin-top: 20px;
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+    }
+
+    #image-gallery img {
+      width: 200px;
+      height: 150px;
+      object-fit: cover;
+      margin: 5px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<h1>관광지 상세 정보</h1>
+<div id="map" style="width:100%; height:300px; border:1px solid #000; margin-bottom: 10px;"></div>
+
+<dl>
+  <dt><strong>관광지명</strong></dt>
+  <dd id="spot-title">...로딩 중</dd>
+  <dt><strong>지역</strong></dt>
+  <dd id="spot-district">...</dd>
+  <dt><strong>주소</strong></dt>
+  <dd id="spot-address">...</dd>
+  <dt><strong>전화번호</strong></dt>
+  <dd id="spot-phone">...</dd>
+  <dt><strong>상세설명</strong></dt>
+  <dd id="spot-description" style="white-space: pre-wrap;">...</dd>
+</dl>
+
+<div id="image-gallery">
+  <h3>관광 이미지</h3>
+  <p id="image-loading-status">...이미지 로딩 중</p>
+</div>
+
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+
+  const touristId = /*[[${touristId}]]*/ 0;
+
+  /*]]>*/
+
+  let map;
+  let geocoder;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const mapContainer = document.getElementById('map');
+    const mapOption = {
+      center: new kakao.maps.LatLng(37.566826, 126.9786567),
+      level: 5
+    };
+
+    map = new kakao.maps.Map(mapContainer, mapOption);
+    geocoder = new kakao.maps.services.Geocoder();
+
+    if (touristId && touristId !== 0) {
+      fetchDetails(touristId);
+    }
+  });
+
+  /* ==========================================================
+     관광지 상세 정보(apiFetch 적용)
+     ========================================================== */
+  async function fetchDetails(id) {
+    try {
+      const response = await apiFetch(`/api/v1/tourist-spots/${id}`);
+
+      if (!response.ok) {
+        throw new Error("상세 조회 실패: " + response.status);
+      }
+
+      const data = await response.json();
+      const spot = data.data;
+
+      if (!spot) {
+        document.getElementById('spot-title').textContent = "관광지 정보를 찾을 수 없습니다.";
+        document.getElementById('image-loading-status').textContent = "";
+        return;
+      }
+
+      // 정보 표시
+      document.getElementById('spot-title').textContent = spot.title;
+      document.getElementById('spot-district').textContent = spot.district;
+      document.getElementById('spot-address').textContent = spot.address;
+      document.getElementById('spot-phone').textContent = spot.phone;
+      document.getElementById('spot-description').textContent = spot.description;
+
+      // Kakao 지도 설정
+      if (spot.address) {
+        geocoder.addressSearch(spot.address, function (result, status) {
+          if (status === kakao.maps.services.Status.OK) {
+            const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            map.setCenter(coords);
+            new kakao.maps.Marker({
+              map: map,
+              position: coords
+            });
+          }
+        });
+      }
+
+      // 이미지 불러오기
+      fetchImages(spot.title);
+
+    } catch (e) {
+      console.error("❌ fetchDetails 오류:", e);
+      document.getElementById('spot-title').textContent = "오류가 발생했습니다.";
+      document.getElementById('image-loading-status').textContent = "";
+    }
+  }
+
+  /* ==========================================================
+     관광지 이미지 불러오기(apiFetch 적용)
+     ========================================================== */
+  async function fetchImages(keyword) {
+    const galleryContainer = document.getElementById('image-gallery');
+    const statusText = document.getElementById('image-loading-status');
+
+    const url = `/api/v1/tourist-spots/images?keyword=${encodeURIComponent(keyword)}`;
+
+    try {
+      const response = await apiFetch(url);
+
+      if (!response.ok) {
+        throw new Error("이미지 API 실패: " + response.status);
+      }
+
+      const data = await response.json();
+      const items = data.response?.body?.items?.item;
+
+      if (items && items.length > 0) {
+        statusText.style.display = 'none';
+
+        items.forEach(item => {
+          const imageUrl = item.galWebImageUrl;
+          if (imageUrl) {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = item.galTitle;
+            img.referrerPolicy = "no-referrer";
+            galleryContainer.appendChild(img);
+          }
+        });
+      } else {
+        statusText.textContent = "관련 이미지를 찾을 수 없습니다.";
+      }
+
+    } catch (e) {
+      console.error("❌ fetchImages 오류:", e);
+      statusText.textContent = "이미지 로딩 중 오류가 발생했습니다.";
+    }
+  }
+</script>
+
+</body>
+</html>

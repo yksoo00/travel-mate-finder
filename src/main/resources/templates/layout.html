@@ -14,6 +14,7 @@
   <link rel="stylesheet" th:href="@{/css/recruit-detail.css}">
   <link rel="stylesheet" th:href="@{/css/recruit-create.css}">
   <link rel="stylesheet" th:href="@{/css/recruit-update.css}">
+  <link rel="stylesheet" th:href="@{/css/touristDetail.css}">
 </head>
 
 <body>
@@ -47,10 +48,11 @@
 
 <!-- 상세 페이지 (defer OK) -->
 <script th:if="${pageName == 'detail'}" th:src="@{/js/recruit-detail.js}" defer></script>
+<script th:if="${pageName == 'touristDetail'}" th:src="@{/js/touristDetail.js}" defer></script>
 
 <!-- 생성/수정 페이지 -->
 <!-- 3) 📌 map-marker-select.js는 바로 뒤에서 실행 (defer 금지) -->
-<script th:if="${pageName == 'create' || pageName == 'update'}"
+<script th:if="${pageName == 'create' || pageName == 'update'||pageName=='touristDetail'}"
         th:src="@{/js/map-marker-select.js}"></script>
 
 <!-- 그 다음 생성/수정 JS (defer OK) -->

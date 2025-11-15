@@ -1,0 +1,78 @@
+<div th:fragment="recruitContent">
+    <div class="tourist-detail-wrapper">
+        <div id="touristDetailContainer" th:attr="data-tourist-id=${touristSpotId}"></div>
+
+        <div class="image-slider-container">
+            <div id="main-image-placeholder" class="main-image-placeholder">
+                [메인 이미지 로딩 중]
+            </div>
+        </div>
+
+        <div class="spot-info-section">
+            <div class="spot-title-row">
+                <h2 id="spot-title" class="spot-info-display title">제목 로딩 중</h2>
+                <div class="spot-actions">
+                    <button class="btn-spot-edit">수정</button>
+                    <button class="btn-spot-delete">삭제</button>
+                </div>
+            </div>
+
+            <div class="info-row-top">
+                <p id="spot-address" class="spot-info-display address">주소 로딩 중</p>
+                <span class="info-separator">|</span>
+                <p id="spot-phone" class="spot-info-display phone">전화번호 로딩 중</p>
+            </div>
+
+            <div class="description-box">
+                <h4 class="description-heading">상세설명</h4>
+                <p id="spot-description" class="spot-info-display description">상세설명 로딩 중</p>
+            </div>
+        </div>
+
+        <div id="image-gallery" class="image-gallery-section">
+            <h3>📷 관광 이미지</h3>
+            <p id="image-loading-status">...이미지 로딩 중</p>
+            <div class="gallery-images">
+            </div>
+        </div>
+
+        <div class="reviews-section">
+            <h3 class="reviews-section-heading">Review</h3>
+
+            <div class="review-form-container">
+                <div class="form-row">
+                    <textarea id="review-content" class="review-textarea" placeholder="댓글을 입력하세요." rows="3" required></textarea>
+                    <button id="submit-review-btn" class="submit-btn">작성하기</button>
+                </div>
+            </div>
+
+            <div id="review-list">
+                <div class="review-item">
+                    <div class="review-meta-row">
+                        <div class="review-meta">
+                            <p class="review-profile">SampleUser</p>
+                            <p class="review-date">2023-11-12</p>
+                        </div>
+                        <div class="review-actions">
+                            <button class="btn-review-edit" onclick="handleReviewEdit()">수정</button>
+                            <button class="btn-review-delete" onclick="handleReviewDelete()">삭제</button>
+                        </div>
+                    </div>
+                    <p class="review-content-display">이곳은 리뷰 리스트가 동적으로 채워질 공간입니다. 이 샘플 리뷰는 삭제되거나 대체됩니다.</p>
+                </div>
+            </div>
+
+            <div id="pagination-container" class="pagination">
+                <span class="page-link active">1</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // 컨트롤러에서 전달받은 touristSpotId를 전역 변수로 선언합니다.
+    const touristId = [[${touristSpotId}]];
+    /*]]>*/
+</script>
+

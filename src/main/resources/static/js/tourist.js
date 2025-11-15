@@ -88,7 +88,7 @@ function displayList(spots) {
     card.className = 'recruit-card';
 
     card.onclick = function () {
-      window.location.href = `/layout/${spot.id}`;
+      window.location.href = `/tourist/touristDetail/${spot.id}`;
     };
 
     const spotAddress = spot.address || '주소 정보 없음';

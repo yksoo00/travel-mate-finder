@@ -26,12 +26,13 @@ public class PathController {
         return "loginForm";
     }
 
-    @GetMapping("/tourist/touristDetail")
-    public String TouristDetailPage(@RequestParam Long id, Model model) {
-        model.addAttribute("touristId", id);
-        model.addAttribute("pageName", "detail");
-        model.addAttribute("pageFragment", "recruit/recruitDetailPage");
-        return "tourist/touristDetail";
+
+    @GetMapping("/tourist/touristDetail/{touristId}")
+    public String TouristDetailPage(@PathVariable Long touristId, Model model) {
+        model.addAttribute("touristSpotId", touristId);
+        model.addAttribute("pageName", "touristDetail");
+        model.addAttribute("pageFragment", "tourist/touristDetail");
+        return "layout";
     }
 
     @GetMapping("/tourist/touristUpdatePage")
@@ -59,6 +60,7 @@ public class PathController {
         // templates/recruit/recruitList.html
         return "myPage/profilePage";
     }
+
 
     @GetMapping("/layout")
     public String layout(Model model) {

@@ -1,0 +1,377 @@
+/* /css/touristDetail.css */
+
+.tourist-detail-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Image Container */
+.image-slider-container {
+  width: 100%;
+  height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.main-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-size: 14px;
+}
+
+.image-slider-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+
+/* 2. Spot Info Section */
+.spot-info-section {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.spot-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.spot-info-display {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.spot-info-display.title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #008CBA;
+  margin-bottom: 0;
+  padding-right: 20px;
+  flex-grow: 1;
+}
+
+/* 💡 통합: 관광지/리뷰 수정 및 삭제 버튼의 기본 스타일 */
+.spot-actions button,
+.review-actions button {
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 5px;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+/* 관광지/리뷰 수정 버튼 색상 */
+.spot-actions .btn-spot-edit,
+.review-actions .btn-review-edit {
+  background-color: #00BFFF; /* Primary Color */
+  color: white;
+}
+
+/* 관광지/리뷰 삭제 버튼 색상 */
+.spot-actions .btn-spot-delete,
+.review-actions .btn-review-delete {
+  background-color: #dc3545; /* Red Color */
+  color: white;
+}
+
+/* 호버 스타일 */
+.spot-actions .btn-spot-edit:hover,
+.review-actions .btn-review-edit:hover {
+  background-color: #008CBA;
+}
+
+.spot-actions .btn-spot-delete:hover,
+.review-actions .btn-review-delete:hover {
+  background-color: #c82333; /* Darker Red */
+}
+
+
+.info-row-top {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #ddd;
+}
+
+.spot-info-display.address, .spot-info-display.phone {
+  font-size: 15px;
+  color: #555;
+  padding: 0;
+  background: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.info-separator {
+  color: #ccc;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.description-box {
+  margin-top: 5px;
+  padding-top: 0;
+}
+
+.description-heading {
+  font-size: 1.1rem;
+  color: #00BFFF;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.spot-info-display.description {
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-size: 15px;
+}
+
+
+/* Image Gallery Section */
+.image-gallery-section {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.image-gallery-section h3 {
+  margin-bottom: 10px;
+  color: #00BFFF;
+  font-size: 1.2rem;
+}
+
+.gallery-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.gallery-images img {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+
+/* Reviews Section */
+.reviews-section {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.reviews-section-heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* 3. Review Form */
+.review-form-container {
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+#review-content {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  resize: none;
+  height: 70px;
+}
+
+.submit-btn {
+  background-color: #00BFFF;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  height: 70px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 4. Review List and Pagination */
+.review-item {
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+}
+
+.review-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+/* 💡 [수정] 이미지를 포함하기 위해 gap 추가 및 정렬 */
+.review-meta {
+  display: flex;
+  gap: 10px; /* 이미지와 텍스트 사이 간격 */
+  align-items: center; /* 이미지와 텍스트 수직 중앙 정렬 */
+}
+
+/* 💡 [추가] 프로필 이미지 스타일 */
+.review-profile-img {
+  width: 35px; /* 이미지 크기 */
+  height: 35px;
+  border-radius: 50%; /* 원형 */
+  object-fit: cover; /* 이미지가 잘리지 않도록 채우기 */
+  flex-shrink: 0; /* 크기 고정 */
+}
+
+/* 💡 [추가] 닉네임과 날짜를 묶어 수직으로 정렬하는 컨테이너 */
+.review-text-meta {
+  display: flex;
+  flex-direction: column; /* 닉네임과 날짜를 세로로 나열 */
+  gap: 2px;
+}
+
+.review-profile {
+  font-weight: bold;
+  color: #00BFFF;
+  margin-bottom: 0; /* 기본 마진 제거 */
+  font-size: 14px;
+}
+
+.review-date {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 0; /* 기본 마진 제거 */
+}
+
+.review-content-display {
+  margin: 5px 0 10px 45px; /* 💡 이미지 크기(35px)와 gap(10px)만큼 들여쓰기 */
+  line-height: 1.5;
+  color: #333;
+  font-size: 14px;
+}
+
+/* 💡 페이지네이션 스타일 유지 및 클릭 가능 요소에 대한 스타일 추가 */
+/* 4. Review List Pagination */
+.pagination {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.page-link {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.page-link:hover {
+  background-color: #eee;
+  border-color: #bbb;
+}
+
+.page-link.active {
+  background-color: #00BFFF;
+  color: white;
+  border-color: #00BFFF;
+}
+
+/* ============================================================================== */
+/* 💡 Review Edit Form (리뷰 작성 폼과 동일한 너비로 확장) */
+/* ============================================================================== */
+.review-edit-form {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start; /* textarea와 버튼을 상단에 맞춤 */
+  padding-top: 5px;
+  margin-bottom: 10px;
+  width: 100%; /* 리뷰 아이템 내에서 전체 너비 사용 */
+}
+
+.review-edit-textarea {
+  flex-grow: 1; /* 💡 수정: 수평으로 최대한 늘어남 */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  resize: none; /* 💡 수정: 크기 조절 불가로 고정 (작성 폼과 동일) */
+  height: 70px; /* 💡 수정: 작성 폼과 동일한 높이 */
+  box-sizing: border-box;
+}
+
+.edit-actions {
+  display: flex;
+  flex-direction: column; /* 💡 수정: 저장/취소 버튼을 수직으로 나열 */
+  gap: 5px;
+  flex-shrink: 0;
+  height: 70px; /* 💡 수정: textarea 높이와 맞춤 */
+  justify-content: space-between; /* 버튼을 위아래로 나누어 정렬 */
+  width: 80px; /* 버튼 그룹 너비 설정 */
+}
+
+/* 저장/취소 버튼 스타일 */
+.edit-actions button {
+  /* 기존 리뷰 수정/삭제 버튼 스타일을 오버라이드합니다. */
+  padding: 8px 5px;
+  height: 32.5px; /* 70px 공간에 5px 간격으로 두 버튼이 적절하게 들어가도록 조정 */
+  font-size: 13px;
+  font-weight: 600;
+  width: 100%;
+  margin-left: 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: white;
+}
+
+.edit-actions .btn-review-save {
+  background-color: #00BFFF; /* Primary Color (저장) */
+}
+
+.edit-actions .btn-review-cancel {
+  background-color: #aaa; /* Cancel button color (취소) */
+}
+
+/* ============================================================================== */
