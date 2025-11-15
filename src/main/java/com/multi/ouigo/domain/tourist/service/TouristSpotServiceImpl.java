@@ -89,7 +89,10 @@ public class TouristSpotServiceImpl implements TouristSpotService {
     @Transactional
     @Override
     public void deleteById(Long id) {
-        touristSpotRepository.deleteById(id);
+
+        TouristSpot touristSpot = touristSpotRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("삭제할 관광지가 존재하지 않습니다."));
+        touristSpot.setDeleted(true);
     }
 
     @Override

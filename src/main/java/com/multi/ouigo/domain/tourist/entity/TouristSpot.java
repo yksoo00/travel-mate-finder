@@ -27,6 +27,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Where(clause = "del_yn = 0")
 public class TouristSpot extends BaseEntity {
 
     @Id
