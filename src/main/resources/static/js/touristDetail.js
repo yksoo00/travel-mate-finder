@@ -1,15 +1,10 @@
-// =====================================================
-// 🚀 1) 전역 변수 선언 (중복 금지)
-// =====================================================
+
 let touristId = null;
 let reviewListContainer = null;
 let paginationContainer = null;
 
 const DEFAULT_PROFILE_IMG = '/img/default-avatar.png';
 
-// =====================================================
-// 🚀 2) DOMContentLoaded — touristId 주입 및 초기화
-// =====================================================
 document.addEventListener("DOMContentLoaded", () => {
 
     const container = document.getElementById('touristDetailContainer');
@@ -37,17 +32,15 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("관리자 버튼을 표시합니다.");
         }
     }
-    // 상세 + 리뷰 로드
+
     fetchDetails(touristId);
     fetchReviewsAndRender(0);
 
-    // 버튼 이벤트 연결
+
     setupButtonListeners();
 });
 
-// =====================================================
-// 🚀 3) 리뷰 목록 가져오기 + 렌더링
-// =====================================================
+
 async function fetchReviewsAndRender(page = 0) {
     if (!touristId) {
         return;
@@ -84,9 +77,7 @@ async function fetchReviewsAndRender(page = 0) {
     }
 }
 
-// =====================================================
-// 🚀 4) 리뷰 렌더링
-// =====================================================
+
 function renderReviews(reviews) {
     reviewListContainer.innerHTML = '';
 
@@ -146,9 +137,7 @@ function renderReviews(reviews) {
     });
 }
 
-// =====================================================
-// 🚀 5) 리뷰 페이지네이션
-// =====================================================
+
 function renderPagination(totalPages, current) {
     paginationContainer.innerHTML = '';
     if (totalPages <= 1) {
@@ -201,9 +190,7 @@ function renderPagination(totalPages, current) {
         createBtn('»', totalPages - 1, current === totalPages - 1));
 }
 
-// =====================================================
-// 🚀 6) 리뷰 수정 / 취소 / 저장 / 삭제
-// =====================================================
+
 function handleReviewEdit(id) {
     const item = document.querySelector(`.review-item[data-review-id="${id}"]`);
     item.querySelector('.review-content-display').style.display = 'none';
@@ -256,9 +243,6 @@ async function handleReviewDelete(id) {
     }
 }
 
-// =====================================================
-// 🚀 7) 관광지 상세 + 이미지 로드
-// =====================================================
 async function fetchDetails(id) {
     try {
         const res = await fetch(`/api/v1/tourist-spots/${id}`);
@@ -304,9 +288,6 @@ async function fetchDetails(id) {
     }
 }
 
-// =====================================================
-// 🚀 8) 관광지 이미지 API
-// =====================================================
 async function fetchImages(keyword) {
     const gallery = document.querySelector('.gallery-images');
     const status = document.getElementById('image-loading-status');
@@ -354,9 +335,6 @@ async function fetchImages(keyword) {
     }
 }
 
-// =====================================================
-// 🚀 9) 수정 / 삭제 버튼 리스너 연결
-// =====================================================
 function setupButtonListeners() {
     document.querySelector('.btn-spot-edit')?.addEventListener('click', () => {
         window.location.href = `/tourist/touristUpdatePage?id=${touristId}`;
@@ -381,9 +359,7 @@ function setupButtonListeners() {
         });
 }
 
-// ===============================
-// 🔵 리뷰 작성 이벤트 등록
-// ===============================
+
 document.getElementById('submit-review-btn')?.addEventListener('click',
     async function () {
         const content = document.getElementById('review-content').value.trim();
@@ -394,7 +370,7 @@ document.getElementById('submit-review-btn')?.addEventListener('click',
         }
 
         try {
-            const memberNo = 1; // 🔥 실제 로그인 사용자 번호로 교체해야 함
+            const memberNo = 1;
             const url = `/api/v1/reviews/${touristId}`;
 
             // 🔥 apiFetch 사용 (토큰 자동 포함됨)

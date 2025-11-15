@@ -26,9 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
     loadPage(0);
 });
 
-/* -----------------------------
- * 🔍 네비바 전역 검색 이벤트
- * ----------------------------- */
 window.addEventListener("globalSearch", async (e) => {
     const keyword = (e.detail.keyword || "").trim();
 
@@ -41,9 +38,6 @@ window.addEventListener("globalSearch", async (e) => {
     loadPage(0);
 });
 
-/* --------------------------------------------------------
- * 🔵 (수정) 키워드에 맞는 마커 로드 (fetch → apiFetch 변경)
- * -------------------------------------------------------- */
 async function loadMapMarkers(keyword) {
     if (window.clearMarkers) {
         window.clearMarkers();
@@ -66,10 +60,6 @@ async function loadMapMarkers(keyword) {
     }
 }
 
-/* --------------------------------------------------------
- * 🔵 관광지 페이지 로드 (fetch → apiFetch 변경)
- *   - currentKeyword를 기준으로 keyword 파라미터 추가
- * -------------------------------------------------------- */
 async function loadPage(page) {
     let url = `/api/v1/tourist-spots?page=${page}&size=10`;
 
@@ -90,9 +80,6 @@ async function loadPage(page) {
     }
 }
 
-/* --------------------------------------------------------
- * 리스트 표시
- * -------------------------------------------------------- */
 function displayList(spots) {
     const listElement = document.getElementById('spot-list-container');
     listElement.innerHTML = '';
@@ -126,9 +113,6 @@ function displayList(spots) {
     });
 }
 
-/* --------------------------------------------------------
- * 페이지네이션
- * -------------------------------------------------------- */
 function displayPagination(pageData) {
     const paginationElement = document.getElementById('pagination-container');
     paginationElement.innerHTML = '';
@@ -148,7 +132,7 @@ function displayPagination(pageData) {
         pageLink.addEventListener('click', (function (pageIndex) {
             return function (e) {
                 e.preventDefault();
-                loadPage(pageIndex);   // 여기서도 currentKeyword 유지된 상태로 호출됨
+                loadPage(pageIndex);
             };
         })(i));
 
